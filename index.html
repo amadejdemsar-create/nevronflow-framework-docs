@@ -1,0 +1,1753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NevronFlow Framework</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #0a0b0f;
+    --bg-card: #13151b;
+    --bg-elevated: #1a1d25;
+    --border: #23262f;
+    --border-strong: #2f333d;
+    --text: #e8eaf0;
+    --text-dim: #9aa0ae;
+    --text-faint: #5a5e6b;
+    --accent: #7c9cff;
+    --accent-hover: #93aeff;
+    --green: #58d18a;
+    --amber: #f0b95e;
+    --magenta: #d279e0;
+    --cyan: #5ec5d1;
+    --red: #e85a5a;
+    --shadow: 0 4px 24px rgba(0,0,0,0.4);
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+    line-height: 1.6;
+    font-size: 15px;
+  }
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(180deg, rgba(124,156,255,0.08) 0%, transparent 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 80px 0 64px;
+  }
+  .hero-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+  .eyebrow {
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  h1 {
+    font-size: 52px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-bottom: 20px;
+  }
+  .hero p.lead {
+    font-size: 20px;
+    color: var(--text-dim);
+    max-width: 700px;
+    margin-bottom: 32px;
+  }
+  .hero-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 24px;
+    max-width: 600px;
+    margin-top: 48px;
+  }
+  .stat {
+    padding: 20px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    text-align: left;
+  }
+  .stat .num {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1;
+  }
+  .stat .label {
+    font-size: 12px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 8px;
+  }
+
+  /* INSTALL BUTTON */
+  .install-bar {
+    background: var(--bg-card);
+    border: 1px solid var(--border-strong);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-top: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .install-bar-text {
+    flex: 1;
+    min-width: 280px;
+  }
+  .install-bar-text h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .install-bar-text p {
+    color: var(--text-dim);
+    font-size: 14px;
+    margin: 0;
+  }
+  .btn-install {
+    background: var(--accent);
+    color: #0a0b0f;
+    border: none;
+    padding: 14px 28px;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+    font-family: inherit;
+  }
+  .btn-install:hover {
+    background: var(--accent-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(124,156,255,0.25);
+  }
+  .btn-install:active {
+    transform: translateY(0);
+  }
+  .btn-install.success {
+    background: var(--green);
+    color: #0a0b0f;
+  }
+  .btn-install.error {
+    background: var(--red);
+    color: #fff;
+  }
+
+  /* NAV */
+  .nav {
+    background: rgba(10,11,15,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    padding: 16px 0;
+  }
+  .nav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    gap: 28px;
+    overflow-x: auto;
+    scrollbar-width: thin;
+  }
+  .nav a {
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: color 0.15s;
+  }
+  .nav a:hover { color: var(--text); }
+
+  /* SECTIONS */
+  section { padding: 72px 0; border-bottom: 1px solid var(--border); }
+  section:last-child { border-bottom: none; }
+  h2 {
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin-bottom: 12px;
+  }
+  h2 + p.section-lead {
+    color: var(--text-dim);
+    font-size: 17px;
+    max-width: 720px;
+    margin-bottom: 40px;
+  }
+  h3 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    margin-top: 32px;
+  }
+
+  /* ARCHITECTURE DIAGRAM */
+  .arch {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 32px;
+    margin-bottom: 32px;
+  }
+  .arch pre {
+    color: var(--text-dim);
+    font-family: "SF Mono", Menlo, monospace;
+    font-size: 12px;
+    line-height: 1.5;
+    overflow-x: auto;
+  }
+
+  /* LOOPS */
+  .loops {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+    margin-top: 24px;
+  }
+  .loop-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    transition: border-color 0.15s;
+  }
+  .loop-card:hover { border-color: var(--border-strong); }
+  .loop-num {
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .loop-title {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .loop-desc {
+    color: var(--text-dim);
+    font-size: 13px;
+  }
+
+  /* FOUR-LAYER PATTERN */
+  .pattern {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-top: 24px;
+  }
+  @media (max-width: 720px) {
+    .pattern { grid-template-columns: 1fr 1fr; }
+  }
+  .pattern-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    position: relative;
+  }
+  .pattern-card::after {
+    content: "→";
+    position: absolute;
+    right: -12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-faint);
+    font-size: 18px;
+    z-index: 1;
+  }
+  .pattern-card:last-child::after { display: none; }
+  @media (max-width: 720px) {
+    .pattern-card::after { display: none; }
+  }
+  .pattern-card .step {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin-bottom: 8px;
+  }
+  .pattern-card .name {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .pattern-card .detail {
+    color: var(--text-dim);
+    font-size: 13px;
+  }
+
+  /* GRID OF ITEMS (rules, agents, skills) */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 14px;
+  }
+  .item {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+    transition: border-color 0.15s, transform 0.15s;
+  }
+  .item:hover {
+    border-color: var(--border-strong);
+  }
+  .item-name {
+    font-family: "SF Mono", Menlo, monospace;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .item-desc {
+    color: var(--text-dim);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--text);
+  }
+  .tag.readonly { background: rgba(124,156,255,0.15); color: var(--accent); }
+  .tag.write { background: rgba(88,209,138,0.15); color: var(--green); }
+  .tag.new { background: rgba(210,121,224,0.15); color: var(--magenta); }
+  .tag.required { background: rgba(240,185,94,0.15); color: var(--amber); }
+  .tag.blocker { background: rgba(232,90,90,0.15); color: var(--red); }
+
+  /* SUBGROUP HEADERS */
+  .subgroup {
+    margin-top: 40px;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .subgroup h4 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .subgroup p {
+    color: var(--text-dim);
+    font-size: 14px;
+    margin: 0;
+  }
+
+  /* HOW IT WORKS — ROLE SPLIT */
+  .roles {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 24px;
+  }
+  @media (max-width: 720px) { .roles { grid-template-columns: 1fr; } }
+  .role-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+  }
+  .role-card.claude { border-top: 3px solid var(--accent); }
+  .role-card.agents { border-top: 3px solid var(--green); }
+  .role-card.hook   { border-top: 3px solid var(--red); }
+  .role-card h4 {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .role-card .sub {
+    font-size: 12px;
+    color: var(--text-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 16px;
+  }
+  .role-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .role-card li {
+    font-size: 13.5px;
+    color: var(--text-dim);
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: start;
+    gap: 10px;
+  }
+  .role-card li:last-child { border-bottom: none; }
+  .role-card li::before {
+    content: "•";
+    color: var(--text-faint);
+    flex-shrink: 0;
+  }
+
+  /* WIRING TABLE */
+  .wiring-wrapper {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 24px;
+  }
+  .wiring-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+  }
+  .wiring-table th {
+    text-align: left;
+    padding: 14px 20px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-faint);
+    font-weight: 600;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-elevated);
+  }
+  .wiring-table td {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .wiring-table tr:last-child td { border-bottom: none; }
+  .wiring-table tr:hover td { background: rgba(124,156,255,0.03); }
+  .wiring-table code {
+    font-family: "SF Mono", Menlo, monospace;
+    font-size: 12px;
+    color: var(--accent);
+    background: rgba(124,156,255,0.08);
+    padding: 2px 6px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+  .wiring-table .agent-chip {
+    display: inline-block;
+    margin: 2px 4px 2px 0;
+    padding: 3px 8px;
+    background: rgba(88,209,138,0.1);
+    color: var(--green);
+    border-radius: 4px;
+    font-family: "SF Mono", Menlo, monospace;
+    font-size: 11px;
+    font-weight: 500;
+  }
+  .wiring-table .agent-chip.readonly {
+    background: rgba(124,156,255,0.1);
+    color: var(--accent);
+  }
+  .wiring-table .none {
+    color: var(--text-faint);
+    font-style: italic;
+    font-size: 12px;
+  }
+  .wiring-table td.purpose {
+    color: var(--text-dim);
+    max-width: 400px;
+  }
+
+  /* FLOWS */
+  .flow {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 28px;
+    margin-bottom: 20px;
+  }
+  .flow-header {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 16px;
+    margin-bottom: 20px;
+  }
+  .flow-header .trigger {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-faint);
+    margin-bottom: 6px;
+  }
+  .flow-header .request {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text);
+    font-style: italic;
+  }
+  .flow-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .flow-step {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  .flow-step-num {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-strong);
+    color: var(--text-dim);
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "SF Mono", Menlo, monospace;
+  }
+  .flow-step-body {
+    flex: 1;
+    padding-top: 3px;
+  }
+  .flow-step-actor {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+  .flow-step-actor.claude { color: var(--accent); }
+  .flow-step-actor.agent { color: var(--green); }
+  .flow-step-actor.skill { color: var(--amber); }
+  .flow-step-actor.user { color: var(--magenta); }
+  .flow-step-actor.hook { color: var(--red); }
+  .flow-step-action {
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.5;
+  }
+  .flow-step-action code {
+    font-family: "SF Mono", Menlo, monospace;
+    font-size: 12px;
+    color: var(--accent);
+    background: rgba(124,156,255,0.08);
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+  .flow-step-detail {
+    font-size: 12.5px;
+    color: var(--text-dim);
+    margin-top: 4px;
+  }
+
+  /* DECISION TREE */
+  .tree {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 28px;
+    margin-top: 24px;
+  }
+  .tree pre {
+    color: var(--text-dim);
+    font-family: "SF Mono", Menlo, monospace;
+    font-size: 12px;
+    line-height: 1.65;
+    overflow-x: auto;
+  }
+  .tree pre .keyword { color: var(--accent); font-weight: 600; }
+  .tree pre .agent-name { color: var(--green); }
+  .tree pre .skill-name { color: var(--amber); }
+  .tree pre .hook-name { color: var(--red); }
+
+  /* FOOTER */
+  footer {
+    padding: 48px 0;
+    text-align: center;
+    color: var(--text-faint);
+    font-size: 13px;
+  }
+  footer a { color: var(--text-dim); text-decoration: none; }
+  footer a:hover { color: var(--text); }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-strong);
+    border-radius: 10px;
+    padding: 14px 20px;
+    box-shadow: var(--shadow);
+    display: none;
+    align-items: center;
+    gap: 10px;
+    z-index: 100;
+    max-width: 360px;
+  }
+  .toast.show { display: flex; }
+  .toast.success { border-color: var(--green); }
+  .toast.error { border-color: var(--red); }
+  .toast-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .toast-content {
+    flex: 1;
+  }
+  .toast-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+  .toast-desc {
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+
+  /* MODAL (prompt preview) */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    padding: 20px;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal {
+    background: var(--bg-card);
+    border: 1px solid var(--border-strong);
+    border-radius: 12px;
+    max-width: 820px;
+    width: 100%;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow);
+  }
+  .modal-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .modal-header h3 {
+    font-size: 17px;
+    font-weight: 600;
+    margin: 0;
+  }
+  .modal-close {
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0 4px;
+  }
+  .modal-body {
+    padding: 24px;
+    overflow-y: auto;
+    flex: 1;
+  }
+  .modal pre {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    font-family: "SF Mono", Menlo, monospace;
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--text-dim);
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .modal-footer {
+    padding: 16px 24px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+  }
+  .btn-secondary {
+    background: transparent;
+    color: var(--text-dim);
+    border: 1px solid var(--border-strong);
+    padding: 10px 18px;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .btn-secondary:hover {
+    color: var(--text);
+    border-color: var(--text-dim);
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="eyebrow">Claude Code Framework</div>
+    <h1>NevronFlow</h1>
+    <p class="lead">Structured development framework for building and maintaining the NevronCore hospitality platform. Doctrine, agents, skills, and enforcement hooks in one layered system.</p>
+
+    <div class="install-bar">
+      <div class="install-bar-text">
+        <h3>Install into your local nevron-core</h3>
+        <p>Copies a Claude Code prompt to your clipboard. Paste into a new Claude Code session; Claude does the rest.</p>
+      </div>
+      <button class="btn-install" id="install-btn" onclick="copyInstallPrompt()">Install into nevron-core</button>
+      <button class="btn-secondary" onclick="showModal()">Preview prompt</button>
+    </div>
+
+    <div class="hero-stats">
+      <div class="stat"><div class="num">16</div><div class="label">Rules</div></div>
+      <div class="stat"><div class="num">20</div><div class="label">Agents</div></div>
+      <div class="stat"><div class="num">23</div><div class="label">Skills</div></div>
+      <div class="stat"><div class="num">1</div><div class="label">Hook</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#architecture">Architecture</a>
+    <a href="#loops">Feedback loops</a>
+    <a href="#pattern">Four-layer pattern</a>
+    <a href="#how-it-works">How it works</a>
+    <a href="#flows">Flows</a>
+    <a href="#rules">Rules</a>
+    <a href="#agents">Agents</a>
+    <a href="#skills">Skills</a>
+    <a href="#hooks">Hooks</a>
+    <a href="#docs">Documents</a>
+  </div>
+</nav>
+
+<!-- ARCHITECTURE -->
+<section id="architecture">
+  <div class="container">
+    <h2>Architecture</h2>
+    <p class="section-lead">Four layers of capability. Claude Code reads the orchestrator instructions, delegates work to surface agents, invokes skills as slash commands, and is stopped by the hook whenever it attempts to skip delegation.</p>
+    <div class="arch">
+<pre>┌──────────────────────────────────────────────────────────────────┐
+│  CLAUDE.md  (orchestrator instructions)                           │
+│  Workflow, communication style, delegation, common issues         │
+└──────────────────────────────────────────────────────────────────┘
+                                │
+          ┌─────────────────────┼─────────────────────┐
+          ▼                     ▼                     ▼
+┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐
+│  16 RULES        │  │  20 AGENTS       │  │  23 SKILLS       │
+│  Doctrine /      │  │  Judgment +      │  │  Mechanical      │
+│  style / policy  │  │  implementation  │  │  procedures      │
+└──────────────────┘  └──────────────────┘  └──────────────────┘
+                                │
+                                ▼
+                      ┌──────────────────┐
+                      │  1 HOOK          │
+                      │  PreToolUse      │
+                      │  delegation gate │
+                      └──────────────────┘</pre>
+    </div>
+  </div>
+</section>
+
+<!-- FEEDBACK LOOPS -->
+<section id="loops">
+  <div class="container">
+    <h2>The five feedback loops</h2>
+    <p class="section-lead">Every non-trivial change in nevron-core flows through one or more of these loops. Skipping steps is the main failure mode the framework exists to prevent.</p>
+    <div class="loops">
+      <div class="loop-card">
+        <div class="loop-num">01</div>
+        <div class="loop-title">Clarify → Plan → Implement → Verify → Explain</div>
+        <div class="loop-desc">Every non-trivial task flows through all five. Skipping any is the main failure mode the workflow rule prevents.</div>
+      </div>
+      <div class="loop-card">
+        <div class="loop-num">02</div>
+        <div class="loop-title">Diagnose before fix</div>
+        <div class="loop-desc">/nf:diagnose enumerates at least 5 candidate causes with evidence before any code change proposal.</div>
+      </div>
+      <div class="loop-card">
+        <div class="loop-num">03</div>
+        <div class="loop-title">Delegate before edit</div>
+        <div class="loop-desc">The PreToolUse hook blocks direct source edits. Every backend / frontend / PWA / TV change goes through the matching surface agent.</div>
+      </div>
+      <div class="loop-card">
+        <div class="loop-num">04</div>
+        <div class="loop-title">Migrate with approval</div>
+        <div class="loop-desc">/nf:db-change shows SQL and asks before any schema mutation. Never autoruns migrate.</div>
+      </div>
+      <div class="loop-card">
+        <div class="loop-num">05</div>
+        <div class="loop-title">Analytics by default</div>
+        <div class="loop-desc">Every new guest / revenue / operational feature must include a metric decision in its plan.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOUR-LAYER PATTERN -->
+<section id="pattern">
+  <div class="container">
+    <h2>The four-layer pattern</h2>
+    <p class="section-lead">Every enforced behavior follows the same shape. Doctrine explains WHY, the rule fires automatically, the agent makes judgment calls, the skill mechanizes the boilerplate.</p>
+
+    <div class="pattern">
+      <div class="pattern-card">
+        <div class="step">Step 1</div>
+        <div class="name">Doctrine</div>
+        <div class="detail">docs/&lt;TOPIC&gt;_GUIDE.md. Explains the principles and patterns. Read once per contributor.</div>
+      </div>
+      <div class="pattern-card">
+        <div class="step">Step 2</div>
+        <div class="name">Rule</div>
+        <div class="detail">.claude/rules/&lt;topic&gt;.md. Fires automatically at plan or decision time. Blocks silent skipping.</div>
+      </div>
+      <div class="pattern-card">
+        <div class="step">Step 3</div>
+        <div class="name">Agent</div>
+        <div class="detail">.claude/agents/&lt;topic&gt;-*.md. Read-only judgment. Proposes decisions without implementing.</div>
+      </div>
+      <div class="pattern-card">
+        <div class="step">Step 4</div>
+        <div class="name">Skill</div>
+        <div class="detail">.claude/skills/nf-&lt;topic&gt;/SKILL.md. Mechanizes the boilerplate. Delegates to surface agents.</div>
+      </div>
+    </div>
+
+    <p style="color: var(--text-dim); font-size: 14px; margin-top: 20px;">Example: analytics. Doctrine = <code>ANALYTICS_CONTRIBUTION_GUIDE.md</code>, rule = <code>analytics-for-new-features.md</code>, agent = <code>nevron-analytics-architect</code>, skill = <code>/nf:add-analytics</code>.</p>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how-it-works">
+  <div class="container">
+    <h2>How it works</h2>
+    <p class="section-lead">Claude is the orchestrator, not the implementer. It reads your request, decides what to delegate, invokes skills as slash commands, and is stopped by the hook whenever it tries to edit source code without going through a surface agent.</p>
+
+    <h3>Who does what</h3>
+    <p style="color: var(--text-dim); font-size: 14px; margin-bottom: 24px;">Three actors: you, Claude (the orchestrator), and the agents. The hook is not an actor but a mechanical gate. Each has a clear lane.</p>
+
+    <div class="roles">
+      <div class="role-card claude">
+        <h4>Claude (the orchestrator)</h4>
+        <div class="sub">Acts alone because of CLAUDE.md</div>
+        <ul>
+          <li>Reads your request and asks clarifying questions if vague</li>
+          <li>Decides which agent(s) or skill(s) to invoke</li>
+          <li>Writes agent prompts with clear context and constraints</li>
+          <li>Synthesizes results from multiple agents</li>
+          <li>Runs verification skills after implementation (<code>/nf:test</code>, <code>/nf:review</code>, <code>/nf:verify-ui</code>)</li>
+          <li>Translates technical changes into business language</li>
+          <li>Manages session state (<code>/nf:save</code>, <code>/nf:continue</code>)</li>
+          <li>Edits trivial config files, CLAUDE.md, docs, .claude/ configs directly</li>
+          <li>Reads and navigates the codebase freely (Grep, Glob, Read)</li>
+        </ul>
+      </div>
+
+      <div class="role-card agents">
+        <h4>Agents (the implementers)</h4>
+        <div class="sub">Act only when Claude delegates</div>
+        <ul>
+          <li>Modify source files in their specific surface (backend / frontend / pwa / tv / pms / widget)</li>
+          <li>Follow the patterns defined in their rule files</li>
+          <li>Run builds and tests within their surface</li>
+          <li>Return a report of what changed and what to verify</li>
+          <li>Read-only agents (feature-planner, diagnostician, architect, checkers) never edit anything</li>
+          <li>Never decide scope on their own; scope is set by the orchestrator</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="role-card hook" style="margin-top: 16px;">
+      <h4>The hook (enforce-delegation.sh)</h4>
+      <div class="sub">Blocks illegal actions at the tool-call level</div>
+      <ul>
+        <li>Fires on <strong>PreToolUse</strong> for Edit, Write, MultiEdit, NotebookEdit</li>
+        <li>Checks: is the target path under <code>backend/</code>, <code>frontend/</code>, <code>pwa/</code>, <code>tv/</code>, <code>pms-hub/</code>, or <code>widget/</code>?</li>
+        <li>If YES and the call is from the main session (no agent_id), it BLOCKS and forces delegation</li>
+        <li>If the call is from a subagent, it passes through</li>
+        <li>One-shot escape for truly trivial edits: <code>touch .claude/ALLOW_DIRECT_EDIT</code> (auto-deletes after use)</li>
+      </ul>
+    </div>
+
+    <h3 style="margin-top: 40px;">The decision tree</h3>
+    <p style="color: var(--text-dim); font-size: 14px; margin-bottom: 0;">Claude runs this decision tree on every user request. It's encoded in <code>CLAUDE.md</code> and the <code>nevronflow-workflow</code> rule, reinforced by auto-memory.</p>
+
+    <div class="tree">
+<pre><span class="keyword">USER REQUEST</span>
+  │
+  ├─ Is the request vague or has multiple interpretations?
+  │     YES → ask clarifying questions first. STOP.
+  │     NO  → continue.
+  │
+  ├─ Is the user reporting a bug / symptom / "it says X"?
+  │     YES → invoke <span class="skill-name">/nf:diagnose</span>
+  │             └─ delegates to <span class="agent-name">nevron-diagnostician</span>
+  │             └─ returns ranked report with 5+ candidate causes
+  │             └─ no fix proposal until report returns
+  │     NO  → continue.
+  │
+  ├─ Is it a new feature or non-trivial change?
+  │     YES → invoke <span class="skill-name">/nf:plan</span> or <span class="agent-name">feature-planner</span> agent
+  │             ├─ Large feature?    use <span class="skill-name">/nf:plan</span> (4 phases: discovery → research → PRD → prompts)
+  │             ├─ Medium?           use <span class="agent-name">feature-planner</span> directly
+  │             └─ Guest/revenue/ops? ALSO invoke <span class="agent-name">nevron-analytics-architect</span> during planning
+  │           Present plan → WAIT for user approval before implementing.
+  │     NO  → continue.
+  │
+  ├─ Does the plan involve a database change?
+  │     YES → invoke <span class="skill-name">/nf:db-change</span>
+  │             └─ delegates to <span class="agent-name">migration-planner</span>
+  │             └─ shows SQL, assesses risk, never auto-runs migrate
+  │     NO  → continue.
+  │
+  ├─ Does implementation require editing files under backend/, frontend/, pwa/, tv/, pms-hub/, widget/?
+  │     YES → delegate to the matching surface agent:
+  │             <span class="agent-name">nevron-backend</span>    for backend/
+  │             <span class="agent-name">nevron-frontend</span>   for frontend/
+  │             <span class="agent-name">nevron-pwa</span>        for pwa/
+  │             <span class="agent-name">nevron-tv</span>         for tv/
+  │             <span class="agent-name">nevron-pms</span>        for pms-hub/
+  │             <span class="agent-name">nevron-frontend</span>   for widget/
+  │           If cross-surface: run agents in parallel.
+  │           <span class="hook-name">⚠ HOOK fires here if you skip delegation</span>
+  │     NO  → Claude edits directly (docs, configs, CLAUDE.md, .claude/ meta).
+  │
+  ├─ After implementation: run verification
+  │     Backend changes    → <span class="skill-name">/nf:test</span>
+  │     Frontend/PWA       → <span class="skill-name">/nf:verify-ui</span> (delegates to <span class="agent-name">ui-verifier</span>)
+  │     Any change         → <span class="skill-name">/nf:review</span> (delegates to <span class="agent-name">code-reviewer</span> + <span class="agent-name">tenant-safety-checker</span>)
+  │     Before merge       → <span class="skill-name">/nf:deploy-check</span>
+  │
+  └─ Explain to the user in business language
+        (what changed, what to test, before vs after)</pre>
+    </div>
+
+    <h3 style="margin-top: 40px;">Skills → agents wiring</h3>
+    <p style="color: var(--text-dim); font-size: 14px; margin-bottom: 0;">Every skill that delegates work shows which agents it spawns. Skills without agent delegations are either session-state helpers (<code>/nf:save</code>, <code>/nf:continue</code>) or direct command runners (<code>/nf:test</code>, <code>/nf:maestro</code>).</p>
+
+    <div class="wiring-wrapper">
+      <table class="wiring-table">
+        <thead>
+          <tr>
+            <th>Skill</th>
+            <th>Invokes agent(s)</th>
+            <th>What it delivers</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>/nf:plan</code></td>
+            <td><span class="agent-chip readonly">nevron-researcher</span></td>
+            <td class="purpose">4-phase planning pipeline. Researcher runs in Phase 2 for cross-industry ideas.</td>
+          </tr>
+          <tr>
+            <td><code>/nf:diagnose</code></td>
+            <td><span class="agent-chip readonly">nevron-diagnostician</span> + surface agent (as needed)</td>
+            <td class="purpose">Enumerates 5+ candidate causes with evidence. Surface agent consulted for code context.</td>
+          </tr>
+          <tr>
+            <td><code>/nf:db-change</code></td>
+            <td><span class="agent-chip readonly">migration-planner</span></td>
+            <td class="purpose">Shows SQL, downtime risk, safe migration path. Never auto-runs migrate.</td>
+          </tr>
+          <tr>
+            <td><code>/nf:review</code></td>
+            <td><span class="agent-chip readonly">code-reviewer</span> <span class="agent-chip readonly">tenant-safety-checker</span></td>
+            <td class="purpose">Full review + tenant safety audit on recent changes.</td>
+          </tr>
+          <tr>
+            <td><code>/nf:tenant-check</code></td>
+            <td><span class="agent-chip readonly">tenant-safety-checker</span></td>
+            <td class="purpose">Quick isolation audit on backend files changed since last commit.</td>
+          </tr>
+          <tr>
+            <td><code>/nf:verify-ui</code></td>
+            <td><span class="agent-chip readonly">ui-verifier</span></td>
+            <td class="purpose">Playwright-driven verification of UI changes. Screenshots included.</td>
+          </tr>
+          <tr>
+            <td><code>/nf:deploy-check</code></td>
+            <td><span class="agent-chip readonly">tenant-safety-checker</span> <span class="agent-chip readonly">ui-verifier</span></td>
+            <td class="purpose">Pre-merge validation: tests, lint, types, migrations, secrets, Docker, tenant safety.</td>
+          </tr>
+          <tr>
+            <td><code>/nf:add-analytics</code></td>
+            <td><span class="agent-chip readonly">nevron-analytics-architect</span> <span class="agent-chip">nevron-backend</span> <span class="agent-chip">nevron-frontend</span> <span class="agent-chip readonly">ui-verifier</span></td>
+            <td class="purpose">Architect already ran (gives metrics). Backend+frontend scaffold boilerplate. Verifier tests.</td>
+          </tr>
+          <tr>
+            <td><code>/nf:push-template</code></td>
+            <td><span class="agent-chip">nevron-push</span> <span class="agent-chip">nevron-backend</span> <span class="agent-chip">nevron-frontend</span></td>
+            <td class="purpose">Scaffolds a push notification template across backend and admin UI.</td>
+          </tr>
+          <tr>
+            <td><code>/nf:hotel-onboard</code></td>
+            <td><span class="agent-chip">nevron-hotel-onboarder</span></td>
+            <td class="purpose">Walks hotel GM through Apple Developer enrolment, D-U-N-S, signing setup.</td>
+          </tr>
+          <tr>
+            <td><code>/nf:mobile-setup</code></td>
+            <td><span class="agent-chip">nevron-mobile</span> <span class="agent-chip">nevron-codemagic</span> <span class="agent-chip">nevron-app-store</span> <span class="agent-chip">nevron-hotel-onboarder</span> <span class="agent-chip">nevron-push</span> <span class="agent-chip">nevron-pms</span></td>
+            <td class="purpose">Initial mobile infra setup. Touches everything: native, CI, store, onboarding, push, PMS.</td>
+          </tr>
+          <tr>
+            <td><code>/nf:mobile-new-variant</code></td>
+            <td><span class="agent-chip">nevron-mobile</span> <span class="agent-chip">nevron-codemagic</span> <span class="agent-chip">nevron-hotel-onboarder</span></td>
+            <td class="purpose">Create a new branded hotel variant with config, signing, CI hooks.</td>
+          </tr>
+          <tr>
+            <td><code>/nf:mobile-build</code></td>
+            <td><span class="agent-chip">nevron-codemagic</span></td>
+            <td class="purpose">Trigger a Codemagic build for a given variant.</td>
+          </tr>
+          <tr>
+            <td><code>/nf:mobile-verify</code></td>
+            <td><span class="agent-chip readonly">ui-verifier</span></td>
+            <td class="purpose">Device-level verification of the mobile build including deep links.</td>
+          </tr>
+          <tr>
+            <td><code>/nf:mobile-submit</code></td>
+            <td><span class="agent-chip">nevron-app-store</span></td>
+            <td class="purpose">Pre-submission checklist + submit to App Store / Google Play.</td>
+          </tr>
+          <tr>
+            <td><code>/nf:codemagic-status</code></td>
+            <td><span class="none">none (direct API call)</span></td>
+            <td class="purpose">CI/CD pipeline status summary.</td>
+          </tr>
+          <tr>
+            <td><code>/nf:test</code></td>
+            <td><span class="none">none (runs pytest directly)</span></td>
+            <td class="purpose">Smart test runner; detects changed files, runs only affected tests.</td>
+          </tr>
+          <tr>
+            <td><code>/nf:maestro</code></td>
+            <td><span class="none">none (runs Maestro CLI)</span></td>
+            <td class="purpose">E2E tests for given surface.</td>
+          </tr>
+          <tr>
+            <td><code>/nf:translate</code></td>
+            <td><span class="none">none (file-level edits)</span></td>
+            <td class="purpose">Add a translatable string across all locale files.</td>
+          </tr>
+          <tr>
+            <td><code>/nf:explain</code></td>
+            <td><span class="none">none (orchestrator summarizes)</span></td>
+            <td class="purpose">Explain code in business language.</td>
+          </tr>
+          <tr>
+            <td><code>/nf:roadmap</code></td>
+            <td><span class="none">none (GitHub API)</span></td>
+            <td class="purpose">AI-managed roadmap via GitHub Projects.</td>
+          </tr>
+          <tr>
+            <td><code>/nf:save</code></td>
+            <td><span class="none">none (writes .nevronflow/)</span></td>
+            <td class="purpose">Save session state for handoff.</td>
+          </tr>
+          <tr>
+            <td><code>/nf:continue</code></td>
+            <td><span class="none">none (reads .nevronflow/)</span></td>
+            <td class="purpose">Resume from saved state.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- FLOWS -->
+<section id="flows">
+  <div class="container">
+    <h2>Three common flows</h2>
+    <p class="section-lead">Worked examples showing the full dance between user, Claude, agents, skills, and the hook.</p>
+
+    <!-- Flow 1: Simple bug -->
+    <div class="flow">
+      <div class="flow-header">
+        <div class="trigger">Flow 1 · Bug report</div>
+        <div class="request">"The catalogue filter isn't showing categories when I pick a module."</div>
+      </div>
+      <div class="flow-steps">
+        <div class="flow-step">
+          <div class="flow-step-num">01</div>
+          <div class="flow-step-body">
+            <div class="flow-step-actor user">User</div>
+            <div class="flow-step-action">Reports the bug in plain language.</div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-num">02</div>
+          <div class="flow-step-body">
+            <div class="flow-step-actor claude">Claude</div>
+            <div class="flow-step-action">Recognizes this is a bug report (not a feature request). Per the decision tree, invokes <code>/nf:diagnose</code> BEFORE proposing any fix.</div>
+            <div class="flow-step-detail">Forbidden: "it's probably X, let me fix it." The workflow rule and auto-memory both enforce diagnosis first.</div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-num">03</div>
+          <div class="flow-step-body">
+            <div class="flow-step-actor skill">/nf:diagnose</div>
+            <div class="flow-step-action">Delegates to <code>nevron-diagnostician</code>.</div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-num">04</div>
+          <div class="flow-step-body">
+            <div class="flow-step-actor agent">nevron-diagnostician (read-only)</div>
+            <div class="flow-step-action">Enumerates 5+ candidate causes. For each: grep-matches the user-visible string, tests the hypothesis against code, rules it in or out with evidence. Returns a ranked report.</div>
+            <div class="flow-step-detail">Example: 1) selector uses wrong field name (LIKELY) 2) interceptor strips query param (unlikely) 3) backend filter logic broken (unlikely) 4) stale cache (ruled out, cache TTL is 0) 5) frontend state not updating (possible, check signal).</div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-num">05</div>
+          <div class="flow-step-body">
+            <div class="flow-step-actor claude">Claude</div>
+            <div class="flow-step-action">Presents the diagnosis. Proposes the top-ranked fix. <strong>Waits for user approval.</strong></div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-num">06</div>
+          <div class="flow-step-body">
+            <div class="flow-step-actor user">User</div>
+            <div class="flow-step-action">"Yes, fix it."</div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-num">07</div>
+          <div class="flow-step-body">
+            <div class="flow-step-actor claude">Claude</div>
+            <div class="flow-step-action">Attempts to edit <code>backend/ebiplatform/catalogues/selectors.py</code> directly.</div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-num">08</div>
+          <div class="flow-step-body">
+            <div class="flow-step-actor hook">Hook: enforce-delegation.sh</div>
+            <div class="flow-step-action">BLOCKS. "Main session attempted to Edit under backend/. Delegate to nevron-backend."</div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-num">09</div>
+          <div class="flow-step-body">
+            <div class="flow-step-actor claude">Claude</div>
+            <div class="flow-step-action">Delegates to <code>nevron-backend</code> agent with the diagnosis, the affected file, and the exact change.</div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-num">10</div>
+          <div class="flow-step-body">
+            <div class="flow-step-actor agent">nevron-backend</div>
+            <div class="flow-step-action">Makes the fix following HackSoft patterns. Runs affected tests. Returns diff + test results.</div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-num">11</div>
+          <div class="flow-step-body">
+            <div class="flow-step-actor claude">Claude</div>
+            <div class="flow-step-action">Invokes <code>/nf:test</code> to confirm broader test suite passes, then <code>/nf:verify-ui</code> to confirm the UI now behaves correctly.</div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-num">12</div>
+          <div class="flow-step-body">
+            <div class="flow-step-actor claude">Claude</div>
+            <div class="flow-step-action">Reports to user in business language: "Before: clicking a module showed zero categories. After: categories appear correctly. Test by going to Catalogues and selecting any module."</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Flow 2: New feature with analytics -->
+    <div class="flow">
+      <div class="flow-header">
+        <div class="trigger">Flow 2 · New feature with analytics</div>
+        <div class="request">"We need a Spa module where guests can book treatments."</div>
+      </div>
+      <div class="flow-steps">
+        <div class="flow-step">
+          <div class="flow-step-num">01</div>
+          <div class="flow-step-body">
+            <div class="flow-step-actor claude">Claude</div>
+            <div class="flow-step-action">This is a feature request. Invokes <code>/nf:plan</code>.</div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-num">02</div>
+          <div class="flow-step-body">
+            <div class="flow-step-actor skill">/nf:plan</div>
+            <div class="flow-step-action">Phase 1: Discovery questions. Asks user about pricing, target hotels, integration with PMS, treatment catalogue structure, deposit handling, cancellation policy. Saves answers to <code>.nevronflow/DECISIONS.md</code>.</div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-num">03</div>
+          <div class="flow-step-body">
+            <div class="flow-step-actor skill">/nf:plan</div>
+            <div class="flow-step-action">Phase 2: Cross-niche research. Invokes <code>nevron-researcher</code>.</div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-num">04</div>
+          <div class="flow-step-body">
+            <div class="flow-step-actor agent">nevron-researcher (read-only)</div>
+            <div class="flow-step-action">Studies how spas, airlines, and restaurant reservation systems handle bookings. Returns 3+ approaches with pros/cons.</div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-num">05</div>
+          <div class="flow-step-body">
+            <div class="flow-step-actor claude">Claude</div>
+            <div class="flow-step-action">Rule fires: <code>analytics-for-new-features</code>. Spa is commerce + engagement. Must include Analytics section in the plan. Invokes <code>nevron-analytics-architect</code>.</div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-num">06</div>
+          <div class="flow-step-body">
+            <div class="flow-step-actor agent">nevron-analytics-architect (read-only)</div>
+            <div class="flow-step-action">Proposes 8 metrics: total_bookings, volume_trend, status_breakdown (baseline), total_revenue, revenue_trend, top_services, avg_booking_value (commerce), + cancellation_reason (deferred V2).</div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-num">07</div>
+          <div class="flow-step-body">
+            <div class="flow-step-actor claude">Claude</div>
+            <div class="flow-step-action">Phase 3: Writes PRD including Analytics section. Phase 4: Writes task prompts. <strong>Presents full plan to user.</strong> Waits for approval.</div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-num">08</div>
+          <div class="flow-step-body">
+            <div class="flow-step-actor user">User</div>
+            <div class="flow-step-action">"Approved. Start Task 1."</div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-num">09</div>
+          <div class="flow-step-body">
+            <div class="flow-step-actor claude">Claude</div>
+            <div class="flow-step-action">Task 1 involves a new DB model → invokes <code>/nf:db-change</code>.</div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-num">10</div>
+          <div class="flow-step-body">
+            <div class="flow-step-actor skill">/nf:db-change</div>
+            <div class="flow-step-action">Delegates to <code>migration-planner</code>. Shows SQL. Assesses risk. User approves.</div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-num">11</div>
+          <div class="flow-step-body">
+            <div class="flow-step-actor claude">Claude</div>
+            <div class="flow-step-action">Delegates SpaBooking model + service + selector + viewset to <code>nevron-backend</code>, and the admin UI to <code>nevron-frontend</code> (parallel).</div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-num">12</div>
+          <div class="flow-step-body">
+            <div class="flow-step-actor claude">Claude</div>
+            <div class="flow-step-action">After the feature's model and basic viewset exist, invokes <code>/nf:add-analytics spa</code>.</div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-num">13</div>
+          <div class="flow-step-body">
+            <div class="flow-step-actor skill">/nf:add-analytics</div>
+            <div class="flow-step-action">Reads the approved architect proposal. Delegates selector scaffolding to <code>nevron-backend</code>, TS interface + module card to <code>nevron-frontend</code>, tests to <code>nevron-backend</code>. Calls <code>ui-verifier</code> at the end.</div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-num">14</div>
+          <div class="flow-step-body">
+            <div class="flow-step-actor claude">Claude</div>
+            <div class="flow-step-action">Runs <code>/nf:review</code> and <code>/nf:deploy-check</code>. Explains changes in business language. Hands off for merge.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Flow 3: Click through the UI -->
+    <div class="flow">
+      <div class="flow-header">
+        <div class="trigger">Flow 3 · UI operation (not code, not plan)</div>
+        <div class="request">"Change this tenant's AI Assistant from Custom to PWA Assistant."</div>
+      </div>
+      <div class="flow-steps">
+        <div class="flow-step">
+          <div class="flow-step-num">01</div>
+          <div class="flow-step-body">
+            <div class="flow-step-actor user">User</div>
+            <div class="flow-step-action">Asks Claude to change a tenant setting in the running app.</div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-num">02</div>
+          <div class="flow-step-body">
+            <div class="flow-step-actor claude">Claude</div>
+            <div class="flow-step-action">Rule 7 of the workflow rule kicks in: <strong>do NOT write step-by-step click instructions for the user</strong>. Claude has Playwright access via <code>ui-operator</code>. Delegates.</div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-num">03</div>
+          <div class="flow-step-body">
+            <div class="flow-step-actor agent">ui-operator</div>
+            <div class="flow-step-action">Logs in as global admin, navigates to the tenant, opens AI Assistants, edits the assistant, changes the type to PWA, saves, verifies in the list. Returns screenshots and confirmation.</div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-num">04</div>
+          <div class="flow-step-body">
+            <div class="flow-step-actor claude">Claude</div>
+            <div class="flow-step-action">Reports: "Changed assistant type to PWA Assistant. Screenshots attached. Verified the change persisted by reopening the edit dialog."</div>
+          </div>
+        </div>
+      </div>
+      <p style="color: var(--text-dim); font-size: 13px; margin-top: 16px; font-style: italic;">Exception: if the action requires physical access (MFA on phone, credit card for payment, secret not shared), Claude asks the user to do it manually. Otherwise: ui-operator drives.</p>
+    </div>
+  </div>
+</section>
+
+<!-- RULES -->
+<section id="rules">
+  <div class="container">
+    <h2>Rules <span style="color: var(--text-faint); font-size: 20px; font-weight: 500;">(16)</span></h2>
+    <p class="section-lead">Doctrine and style guides. Referenced by agents, Claude, and the team at decision time.</p>
+
+    <div class="grid">
+      <div class="item"><div class="item-name">nevronflow-workflow <span class="tag required">core</span></div><div class="item-desc">Mandatory workflow: clarify → plan → delegate → verify. The orchestration spine.</div></div>
+      <div class="item"><div class="item-name">multi-tenant <span class="tag required">critical</span></div><div class="item-desc">Tenant isolation rules. A violation means Hotel A can see Hotel B's guest data. Most critical rules in the system.</div></div>
+      <div class="item"><div class="item-name">backend-style</div><div class="item-desc">Django backend: HackSoft pattern. Services (writes), selectors (reads), thin viewsets.</div></div>
+      <div class="item"><div class="item-name">frontend-style</div><div class="item-desc">Angular 19 admin panel: standalone components, signals, PrimeNG 19 / Aura theme, Tailwind CSS.</div></div>
+      <div class="item"><div class="item-name">pwa-style</div><div class="item-desc">Ionic 8 guest PWA: Capacitor, offline-first, guest auth, in-stay assistant. NgModule pattern, not standalone.</div></div>
+      <div class="item"><div class="item-name">tv-style</div><div class="item-desc">Vue 2 TV client: Tizen / LG constraints, memory limits, no modern JS. Remote-control navigation.</div></div>
+      <div class="item"><div class="item-name">widget-style</div><div class="item-desc">Preact chat widget: Shadow DOM isolation, SSE streaming, bundle size constraints.</div></div>
+      <div class="item"><div class="item-name">mobile-style</div><div class="item-desc">Capacitor native layer: variants, on-device tenant isolation, biometric gate, offline cache TTLs.</div></div>
+      <div class="item"><div class="item-name">api-conventions</div><div class="item-desc">REST URL structure, pagination format, auth mechanisms, error shapes.</div></div>
+      <div class="item"><div class="item-name">testing</div><div class="item-desc">pytest patterns, coverage targets, test organization, tenant-safety test fixtures.</div></div>
+      <div class="item"><div class="item-name">hospitality-domain</div><div class="item-desc">Hotel industry glossary. Folio, stay, PMS, guest journey, access group translations.</div></div>
+      <div class="item"><div class="item-name">ai-chat-context</div><div class="item-desc">Two chatbot audiences: widget (pre-stay, potential guests) vs PWA (in-stay, current guests).</div></div>
+      <div class="item"><div class="item-name">business-context</div><div class="item-desc">Reference to BUSINESS_CONTEXT.md for pricing, module value, customer segment priorities.</div></div>
+      <div class="item"><div class="item-name">app-store-compliance</div><div class="item-desc">Apple + Google store policies: reviewer notes, metadata, data safety, rejection response playbook.</div></div>
+      <div class="item"><div class="item-name">codemagic-ci</div><div class="item-desc">CI/CD conventions: workflow naming, signing groups, fastlane policy, validation after every YAML edit.</div></div>
+      <div class="item"><div class="item-name">analytics-for-new-features <span class="tag new">new</span></div><div class="item-desc">Every new feature plan must include an Analytics section. Fires during /nf:plan and feature-planner.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- AGENTS -->
+<section id="agents">
+  <div class="container">
+    <h2>Agents <span style="color: var(--text-faint); font-size: 20px; font-weight: 500;">(20)</span></h2>
+    <p class="section-lead">Claude orchestrates; agents implement or analyze. Each has defined tools and a clear purpose.</p>
+
+    <div class="subgroup">
+      <h4>Implementation agents (Write / Edit enabled)</h4>
+      <p>These agents receive delegation from Claude and modify source files in their surface.</p>
+    </div>
+    <div class="grid">
+      <div class="item"><div class="item-name">nevron-backend <span class="tag write">write</span></div><div class="item-desc">Django backend. 40+ ebiplatform apps, HackSoft patterns, tenant safety. For any backend feature work.</div></div>
+      <div class="item"><div class="item-name">nevron-frontend <span class="tag write">write</span></div><div class="item-desc">Angular admin panel. Standalone components, signals, PrimeNG / Aura, Tailwind. For admin UI.</div></div>
+      <div class="item"><div class="item-name">nevron-pwa <span class="tag write">write</span></div><div class="item-desc">Ionic guest PWA. Capacitor, offline-first, guest chat. For guest-facing features.</div></div>
+      <div class="item"><div class="item-name">nevron-tv <span class="tag write">write</span></div><div class="item-desc">Vue 2 TV client. Hardware constraint awareness, memory-limited environments.</div></div>
+      <div class="item"><div class="item-name">nevron-pms <span class="tag write">write</span></div><div class="item-desc">FastAPI PMS Hub. Adapters for Opera, Protel, FIAS, Clock, Bentral. Data mapping, error handling.</div></div>
+      <div class="item"><div class="item-name">nevron-mobile <span class="tag write">write</span></div><div class="item-desc">Capacitor native layer. Variant workflows, device-level tenant isolation, biometric gate.</div></div>
+      <div class="item"><div class="item-name">nevron-push <span class="tag write">write</span></div><div class="item-desc">Push notifications. fcm-django + firebase-admin, Android channels, cost controls.</div></div>
+      <div class="item"><div class="item-name">nevron-codemagic <span class="tag write">write</span></div><div class="item-desc">CI/CD. Owns codemagic.yaml, fastlane config, variant-aware build workflows, signing certificates.</div></div>
+      <div class="item"><div class="item-name">nevron-app-store <span class="tag write">write</span></div><div class="item-desc">Apple + Google submission. Reviewer notes, store metadata, screenshots, privacy, rejection responses.</div></div>
+      <div class="item"><div class="item-name">nevron-hotel-onboarder <span class="tag write">write</span></div><div class="item-desc">Hotel GM onboarding. Walks non-technical GM through Apple Developer enrolment, D-U-N-S, signing.</div></div>
+      <div class="item"><div class="item-name">ui-operator <span class="tag write">write</span></div><div class="item-desc">Performs tasks in the running app via Playwright. Clicks, creates records, tests flows by acting.</div></div>
+    </div>
+
+    <div class="subgroup">
+      <h4>Read-only agents (judgment + investigation)</h4>
+      <p>These agents analyze, propose, and verify without modifying any files.</p>
+    </div>
+    <div class="grid">
+      <div class="item"><div class="item-name">feature-planner <span class="tag readonly">read-only</span></div><div class="item-desc">Translates business language into technical plans. Maps files, identifies canonical examples, estimates scope.</div></div>
+      <div class="item"><div class="item-name">nevron-researcher <span class="tag readonly">read-only</span></div><div class="item-desc">Cross-industry innovation research. Studies how airlines, restaurants, cruise ships solve similar problems.</div></div>
+      <div class="item"><div class="item-name">nevron-analytics-architect <span class="tag readonly">read-only</span> <span class="tag new">new</span></div><div class="item-desc">Proposes which metrics matter for a new feature. Judges cost, data sources, V1/V2 split.</div></div>
+      <div class="item"><div class="item-name">nevron-diagnostician <span class="tag readonly">read-only</span></div><div class="item-desc">Systematic bug investigation. Enumerates 5+ candidate causes with evidence, ranks ruled-out section visible.</div></div>
+      <div class="item"><div class="item-name">migration-planner <span class="tag readonly">read-only</span></div><div class="item-desc">Plans Django migrations. Shows actual SQL, assesses downtime risk, never runs migrate.</div></div>
+      <div class="item"><div class="item-name">tenant-safety-checker <span class="tag readonly">read-only</span></div><div class="item-desc">Audits for multi-tenant isolation violations. Checks for schema leakage, cross-tenant access, missing context.</div></div>
+      <div class="item"><div class="item-name">code-reviewer <span class="tag readonly">read-only</span></div><div class="item-desc">Pattern compliance, security, performance, test coverage, tenant safety. Structured report with criticality.</div></div>
+      <div class="item"><div class="item-name">integration-checker <span class="tag readonly">read-only</span></div><div class="item-desc">Verifies cross-component wiring: API contracts match frontend calls, routes resolve, data flows end-to-end.</div></div>
+      <div class="item"><div class="item-name">ui-verifier <span class="tag readonly">read-only</span></div><div class="item-desc">Verifies UI changes in the running app via Playwright. Brainstorms test scenarios, clicks to exercise change.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="container">
+    <h2>Skills <span style="color: var(--text-faint); font-size: 20px; font-weight: 500;">(23)</span></h2>
+    <p class="section-lead">Mechanical procedures the user invokes with <code>/nf:&lt;name&gt;</code>. Each skill has a specific trigger and outcome.</p>
+
+    <div class="subgroup"><h4>Planning and discovery</h4><p>Used at the start of any non-trivial change.</p></div>
+    <div class="grid">
+      <div class="item"><div class="item-name">/nf:plan</div><div class="item-desc">4-phase planning pipeline: Discovery Questions → Cross-Niche Research → Machine-Optimized PRD → AI Implementation Prompts. Most thorough.</div></div>
+      <div class="item"><div class="item-name">/nf:roadmap</div><div class="item-desc">AI-managed roadmap via GitHub Projects. View sprint, add items, reprioritize, plan sprints, mark done.</div></div>
+    </div>
+
+    <div class="subgroup"><h4>Diagnosis and code quality</h4><p>Quality gates before and after implementation.</p></div>
+    <div class="grid">
+      <div class="item"><div class="item-name">/nf:diagnose</div><div class="item-desc">Systematic bug investigation via nevron-diagnostician. Enumerates all plausible causes, ranks ruled-out ones visible.</div></div>
+      <div class="item"><div class="item-name">/nf:review</div><div class="item-desc">Combined code review + tenant safety check. Runs code-reviewer and tenant-safety-checker agents on recent changes.</div></div>
+      <div class="item"><div class="item-name">/nf:tenant-check</div><div class="item-desc">Quick tenant isolation audit on backend files changed since last commit. Pass/fail with line numbers.</div></div>
+      <div class="item"><div class="item-name">/nf:test</div><div class="item-desc">Smart test runner: detects changed files, runs only affected tests, translates results to plain language.</div></div>
+      <div class="item"><div class="item-name">/nf:verify-ui</div><div class="item-desc">Manual UI verification via Playwright. Wraps ui-verifier so the team can run verification on demand.</div></div>
+      <div class="item"><div class="item-name">/nf:maestro</div><div class="item-desc">E2E tests across surfaces (pwa, admin, super-admin, tenant, or all).</div></div>
+    </div>
+
+    <div class="subgroup"><h4>Database and deployment</h4><p>Gate-controlled mutations and releases.</p></div>
+    <div class="grid">
+      <div class="item"><div class="item-name">/nf:db-change</div><div class="item-desc">DB change safety protocol. Launches migration-planner. Shows SQL, assesses risk, never auto-runs.</div></div>
+      <div class="item"><div class="item-name">/nf:deploy-check</div><div class="item-desc">Pre-merge validation: tests, lint, types, migration consistency, secrets scan, Docker build, tenant safety.</div></div>
+    </div>
+
+    <div class="subgroup"><h4>Mobile app lifecycle</h4><p>Capacitor native builds, variants, store submissions.</p></div>
+    <div class="grid">
+      <div class="item"><div class="item-name">/nf:mobile-setup</div><div class="item-desc">Initial mobile infrastructure setup for a fresh variant or new project.</div></div>
+      <div class="item"><div class="item-name">/nf:mobile-new-variant</div><div class="item-desc">Create a new branded hotel variant with config, signing, and CI hooks.</div></div>
+      <div class="item"><div class="item-name">/nf:mobile-build</div><div class="item-desc">Build mobile app(s) for a given variant via Codemagic.</div></div>
+      <div class="item"><div class="item-name">/nf:mobile-verify</div><div class="item-desc">Verify mobile build on a physical device, including deep link handling.</div></div>
+      <div class="item"><div class="item-name">/nf:mobile-submit</div><div class="item-desc">Pre-submission checklist and submission to App Store and Google Play.</div></div>
+      <div class="item"><div class="item-name">/nf:codemagic-status</div><div class="item-desc">Check current CI/CD pipeline status across workflows.</div></div>
+    </div>
+
+    <div class="subgroup"><h4>Content and communication</h4><p>User-facing text, translations, explanations.</p></div>
+    <div class="grid">
+      <div class="item"><div class="item-name">/nf:translate</div><div class="item-desc">Add a translatable string across all locale files (Django .po + Angular i18n). Marks for review.</div></div>
+      <div class="item"><div class="item-name">/nf:explain</div><div class="item-desc">Explain code in business language. Ties what code DOES to hotel operations, not how it works technically.</div></div>
+      <div class="item"><div class="item-name">/nf:push-template</div><div class="item-desc">Push notification template scaffolding.</div></div>
+      <div class="item"><div class="item-name">/nf:hotel-onboard</div><div class="item-desc">Hotel GM onboarding assistance. Walks through Apple Developer enrolment, D-U-N-S, signing.</div></div>
+    </div>
+
+    <div class="subgroup"><h4>Analytics</h4><p>Part of the new analytics framework.</p></div>
+    <div class="grid">
+      <div class="item"><div class="item-name">/nf:add-analytics <span class="tag new">new</span></div><div class="item-desc">Scaffolds analytics boilerplate (selector, TS interface, module card, tests) after architect's proposal is approved.</div></div>
+    </div>
+
+    <div class="subgroup"><h4>Session state</h4><p>Cross-session persistence.</p></div>
+    <div class="grid">
+      <div class="item"><div class="item-name">/nf:save</div><div class="item-desc">Save current session state to .nevronflow/PROGRESS.md. Any team member can resume with /nf:continue.</div></div>
+      <div class="item"><div class="item-name">/nf:continue</div><div class="item-desc">Resume from saved state. Reads PROGRESS.md, PLAN.md, PRD.md to restore context.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- HOOKS -->
+<section id="hooks">
+  <div class="container">
+    <h2>Hooks <span style="color: var(--text-faint); font-size: 20px; font-weight: 500;">(1)</span></h2>
+    <p class="section-lead">Automatic enforcement at the tool-call level. Runs before Claude can execute certain actions.</p>
+
+    <div class="grid">
+      <div class="item"><div class="item-name">enforce-delegation.sh <span class="tag blocker">blocker</span></div><div class="item-desc">PreToolUse hook. Blocks Edit / Write / MultiEdit / NotebookEdit from the main session when the target is under backend/, frontend/, pwa/, tv/, pms-hub/, or widget/. Subagent-originated edits pass through automatically. One-shot escape: <code>touch .claude/ALLOW_DIRECT_EDIT</code>.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- DOCUMENTS -->
+<section id="docs">
+  <div class="container">
+    <h2>Documents</h2>
+    <p class="section-lead">Durable doctrine referenced by agents and skills. The framework itself enforces reading these where relevant.</p>
+
+    <div class="grid">
+      <div class="item"><div class="item-name">docs/ANALYTICS_CONTRIBUTION_GUIDE.md <span class="tag new">new</span></div><div class="item-desc">Durable analytics doctrine. Read before adding analytics to any new feature. Defines pattern, baseline metrics, category menu, data model requirements, cache conventions, testing bar, anti-patterns. 840 lines.</div></div>
+      <div class="item"><div class="item-name">templates/CLAUDE.md.template</div><div class="item-desc">Project-level orchestrator instructions. Copy to repo root if CLAUDE.md does not exist.</div></div>
+      <div class="item"><div class="item-name">templates/COMPONENT_CATALOG.md</div><div class="item-desc">Reference for reusable frontend components, shared services, backend pattern examples.</div></div>
+      <div class="item"><div class="item-name">templates/BUSINESS_CONTEXT.md.template</div><div class="item-desc">Pricing model, module business value, customer segments, current priorities. Starts mostly empty; fill in via conversation with Claude.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <p>NevronFlow Framework · Private · Internal Nevron engineering · Last updated 21. 4. 2026</p>
+    <p style="margin-top: 8px;"><a href="https://github.com/amadejdemsar-create/nevronflow-framework">Repository</a> · <a href="./INSTALL.md">Manual install</a> · <a href="./docs/ANALYTICS_CONTRIBUTION_GUIDE.md">Analytics contribution guide</a></p>
+  </div>
+</footer>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <div class="toast-icon" id="toast-icon">✓</div>
+  <div class="toast-content">
+    <div class="toast-title" id="toast-title">Prompt copied</div>
+    <div class="toast-desc" id="toast-desc">Paste into a new Claude Code session.</div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal" onclick="if(event.target===this)hideModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Install prompt</h3>
+      <button class="modal-close" onclick="hideModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <p style="color: var(--text-dim); font-size: 14px; margin-bottom: 16px;">Copy this prompt and paste it into a fresh Claude Code session. Claude will find your nevron-core project (or ask), clone this repo, and install the framework.</p>
+      <pre id="prompt-text"></pre>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="hideModal()">Close</button>
+      <button class="btn-install" onclick="copyInstallPrompt(); hideModal();">Copy to clipboard</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// The install prompt that gets copied to clipboard.
+// When pasted into a new Claude Code session, Claude will execute these instructions.
+const INSTALL_PROMPT = `I want to install the NevronFlow framework into my local nevron-core project.
+
+NevronFlow is a Claude Code framework for the NevronCore hospitality platform: 16 rules, 20 agents, 23 skills, 1 hook, the analytics contribution guide, 3 templates. The repo is at https://github.com/amadejdemsar-create/nevronflow-framework — PRIVATE, collaborator access required. If I am not yet a collaborator, cloning will 404 and we will stop to request access.
+
+Follow these steps. CONFIRM WITH ME at every key decision point. Do not guess paths or proceed silently.
+
+══ STEP 1: FIND my nevron-core checkout ══
+
+Do NOT assume a specific path. Search broadly.
+
+Run these searches, collect all matches, then show me the candidates:
+
+    find ~ -maxdepth 6 -type d \\( -iname "nevron-core" -o -iname "nevroncore" \\) 2>/dev/null
+    find /Users/Shared -maxdepth 5 -type d -iname "nevron-core" 2>/dev/null
+    find /opt /srv /workspaces -maxdepth 4 -type d -iname "nevron-core" 2>/dev/null
+
+For each candidate, verify it is actually nevron-core (not just a similarly named folder). A real nevron-core checkout has:
+  - a .git directory (it is a git repo)
+  - a backend/ebiplatform subdirectory (strong marker)
+  - a CLAUDE.md at the repo root that mentions nevron
+
+Present candidates to me as a numbered list with those markers:
+
+    1. /Users/alice/projects/nevron-core  (git: yes, ebiplatform: yes, CLAUDE.md: yes)  ← looks real
+    2. /tmp/old-checkout/nevron-core      (git: no)                                     ← probably not
+
+Then ASK me:
+    "Which of these is your nevron-core checkout? Reply with a number, or paste an absolute path if none of these are correct."
+
+If zero candidates were found, ask me: "I could not find nevron-core anywhere obvious. Please paste the absolute path to your local checkout."
+
+Wait for my answer. Store it as NEVRON_CORE for subsequent steps. Verify one more time that the path I gave exists and has the markers. If it does not, ask me to correct it.
+
+══ STEP 2: CONFIRM the installation plan before writing anything ══
+
+Describe exactly what you are about to do, then ASK me to approve.
+
+    "I am about to:
+       1. Clone the framework from GitHub to /tmp/nevronflow-framework
+       2. Back up your existing $NEVRON_CORE/.claude/ (if any) to .claude.backup-<timestamp>
+       3. Copy the framework .claude/ into $NEVRON_CORE/.claude/
+       4. Copy ANALYTICS_CONTRIBUTION_GUIDE.md into $NEVRON_CORE/docs/
+       5. Set the hook to executable
+       6. Offer (separately, one at a time) to copy CLAUDE.md / BUSINESS_CONTEXT.md / COMPONENT_CATALOG.md templates if they do not already exist at the repo root.
+     Proceed? (yes/no)"
+
+If I say no, stop immediately. Do nothing.
+
+══ STEP 3: CLONE the framework ══
+
+Try methods in order. Stop at the first one that works.
+
+Method A — plain git (most universal; works if your git credentials are already configured):
+
+    rm -rf /tmp/nevronflow-framework
+    git clone https://github.com/amadejdemsar-create/nevronflow-framework.git /tmp/nevronflow-framework
+
+Method B — GitHub CLI (if plain git failed with an auth error):
+
+    gh auth status
+    # If "You are not logged into any GitHub hosts" or similar, tell me to run in MY OWN terminal (gh login is interactive and you cannot run it):
+    #     gh auth login
+    # Wait for me to confirm I am authenticated. Then:
+    gh repo clone amadejdemsar-create/nevronflow-framework /tmp/nevronflow-framework
+
+Method C — GitHub MCP server (if neither git nor gh worked, and the session has MCP tools with the prefix mcp__github__*):
+
+    Check if tools like mcp__github__get_file_contents, mcp__github__list_repository_contents, or a fetch-tarball equivalent are available.
+    If yes, use the MCP API to download the repo tree into /tmp/nevronflow-framework. Fetch:
+       - .claude/ (entire tree: agents/, skills/<each>/, rules/, hooks/)
+       - docs/ANALYTICS_CONTRIBUTION_GUIDE.md
+       - templates/ (all three)
+       - README.md, INSTALL.md (for reference)
+    Preserve directory structure. This is slower than git clone but works when git auth is not set up.
+
+If ALL THREE methods fail, stop and report to me:
+    "Could not clone the repo. The error was: <exact error>. Options to unblock:
+       (1) Run 'gh auth login' in your terminal, then tell me to retry.
+       (2) Set up a GitHub personal access token in git credentials.
+       (3) Ask the repo owner (amadej) to add your GitHub account as a collaborator on amadejdemsar-create/nevronflow-framework.
+     Which one?"
+
+If the error is specifically 'Repository not found' or HTTP 404, that means you don't have collaborator access — skip straight to option 3.
+
+══ STEP 4: VERIFY the clone ══
+
+Confirm the clone is complete and matches expectations:
+
+    test "$(ls /tmp/nevronflow-framework/.claude/agents 2>/dev/null | wc -l | tr -d ' ')" = "20" && echo "agents OK" || echo "agents FAIL"
+    test "$(ls /tmp/nevronflow-framework/.claude/skills 2>/dev/null | wc -l | tr -d ' ')" = "23" && echo "skills OK" || echo "skills FAIL"
+    test "$(ls /tmp/nevronflow-framework/.claude/rules  2>/dev/null | wc -l | tr -d ' ')" = "16" && echo "rules OK"  || echo "rules FAIL"
+    test "$(ls /tmp/nevronflow-framework/.claude/hooks  2>/dev/null | wc -l | tr -d ' ')" = "1"  && echo "hooks OK"  || echo "hooks FAIL"
+
+If any count is off, tell me which counts failed and STOP. Do not copy partial installs into nevron-core.
+
+══ STEP 5: BACKUP existing .claude/ (if any) ══
+
+If $NEVRON_CORE/.claude already exists:
+
+    TIMESTAMP=$(date +%Y%m%d%H%M%S)
+    mv "$NEVRON_CORE/.claude" "$NEVRON_CORE/.claude.backup-$TIMESTAMP"
+    # Tell me the exact backup folder name. I can restore from it with: mv .claude.backup-<TS> .claude
+
+If $NEVRON_CORE/.claude does not exist, skip this step.
+
+══ STEP 6: INSTALL the framework ══
+
+    cp -R /tmp/nevronflow-framework/.claude "$NEVRON_CORE/.claude"
+    mkdir -p "$NEVRON_CORE/docs"
+    cp /tmp/nevronflow-framework/docs/ANALYTICS_CONTRIBUTION_GUIDE.md "$NEVRON_CORE/docs/"
+    chmod +x "$NEVRON_CORE/.claude/hooks/enforce-delegation.sh"
+
+══ STEP 7: TEMPLATES (one by one, ASK BEFORE each) ══
+
+For each of the following, ONLY proceed if the file does not already exist at the nevron-core root. If the file exists, skip silently. If it is missing, ASK me individually.
+
+    a) CLAUDE.md
+        If missing, ASK: "$NEVRON_CORE/CLAUDE.md does not exist. Copy the NevronFlow CLAUDE.md template? (y/n)"
+        If yes: cp /tmp/nevronflow-framework/templates/CLAUDE.md.template "$NEVRON_CORE/CLAUDE.md"
+
+    b) BUSINESS_CONTEXT.md
+        Same pattern with /tmp/nevronflow-framework/templates/BUSINESS_CONTEXT.md.template
+
+    c) COMPONENT_CATALOG.md
+        Same pattern with /tmp/nevronflow-framework/templates/COMPONENT_CATALOG.md
+
+══ STEP 8: CLEANUP ══
+
+    rm -rf /tmp/nevronflow-framework
+
+══ STEP 9: REPORT ══
+
+Tell me, as a clean summary:
+  - How many agents / skills / rules / hooks installed (verify against the counts from Step 4)
+  - Where the backup was created (if any), and how I can restore from it if needed
+  - Which templates were copied (if any)
+  - ACTION REQUIRED: restart Claude Code. Agents and skills are cached at session start; they will not load until I start a fresh session.
+  - First test after restart: cd to my nevron-core directory, start Claude Code, try "/nf:plan" or ask "what agents do I have available?" to confirm the framework loaded.
+
+IMPORTANT: during this install, you are ONLY installing. Do NOT start using any of the new agents, skills, or rules. Do not run /nf:plan, do not delegate to any nevron-* agent. The framework only becomes active in my NEXT session after a restart.`;
+
+function showToast(type, title, desc) {
+  const toast = document.getElementById('toast');
+  const icon = document.getElementById('toast-icon');
+  const t = document.getElementById('toast-title');
+  const d = document.getElementById('toast-desc');
+
+  toast.className = 'toast show ' + type;
+  icon.textContent = type === 'success' ? '✓' : '✕';
+  t.textContent = title;
+  d.textContent = desc;
+
+  setTimeout(() => toast.classList.remove('show'), 3500);
+}
+
+async function copyInstallPrompt() {
+  const btn = document.getElementById('install-btn');
+  const original = btn.textContent;
+
+  try {
+    await navigator.clipboard.writeText(INSTALL_PROMPT);
+    btn.textContent = 'Copied ✓';
+    btn.classList.add('success');
+    showToast('success', 'Install prompt copied', 'Paste into a new Claude Code session.');
+
+    setTimeout(() => {
+      btn.textContent = original;
+      btn.classList.remove('success');
+    }, 2500);
+  } catch (err) {
+    // Fallback for older browsers
+    const ta = document.createElement('textarea');
+    ta.value = INSTALL_PROMPT;
+    document.body.appendChild(ta);
+    ta.select();
+    try {
+      document.execCommand('copy');
+      btn.textContent = 'Copied ✓';
+      btn.classList.add('success');
+      showToast('success', 'Install prompt copied', 'Paste into a new Claude Code session.');
+    } catch {
+      btn.textContent = 'Copy failed';
+      btn.classList.add('error');
+      showToast('error', 'Could not copy', 'Click "Preview prompt" and copy manually.');
+    }
+    document.body.removeChild(ta);
+    setTimeout(() => {
+      btn.textContent = original;
+      btn.classList.remove('success', 'error');
+    }, 2500);
+  }
+}
+
+function showModal() {
+  document.getElementById('prompt-text').textContent = INSTALL_PROMPT;
+  document.getElementById('modal').classList.add('show');
+}
+
+function hideModal() {
+  document.getElementById('modal').classList.remove('show');
+}
+
+// Close modal on Escape
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') hideModal();
+});
+</script>
+
+</body>
+</html>
