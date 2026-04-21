@@ -1581,10 +1581,11 @@ Describe exactly what you are about to do, then ASK me to approve.
     "I am about to:
        1. Clone the framework from GitHub to /tmp/nevronflow-framework
        2. Back up your existing $NEVRON_CORE/.claude/ (if any) to .claude.backup-<timestamp>
-       3. Copy the framework .claude/ into $NEVRON_CORE/.claude/
+       3. Copy the framework .claude/ into $NEVRON_CORE/.claude/ — this includes agents, skills, rules, hooks, AND settings.json (which registers the delegation hook)
        4. Copy ANALYTICS_CONTRIBUTION_GUIDE.md into $NEVRON_CORE/docs/
        5. Set the hook to executable
-       6. Offer (separately, one at a time) to copy CLAUDE.md / BUSINESS_CONTEXT.md / COMPONENT_CATALOG.md templates if they do not already exist at the repo root.
+       6. For CLAUDE.md at the repo root: diff your current one against the NevronFlow template. If substantially different, ASK whether to back up and replace (recommended), leave alone, or show a summary first.
+       7. For BUSINESS_CONTEXT.md and COMPONENT_CATALOG.md at the repo root: offer to copy templates only if the files do not already exist.
      Proceed? (yes/no)"
 
 If I say no, stop immediately. Do nothing.
@@ -1633,8 +1634,11 @@ Confirm the clone is complete and matches expectations:
     test "$(ls /tmp/nevronflow-framework/.claude/skills 2>/dev/null | wc -l | tr -d ' ')" = "23" && echo "skills OK" || echo "skills FAIL"
     test "$(ls /tmp/nevronflow-framework/.claude/rules  2>/dev/null | wc -l | tr -d ' ')" = "16" && echo "rules OK"  || echo "rules FAIL"
     test "$(ls /tmp/nevronflow-framework/.claude/hooks  2>/dev/null | wc -l | tr -d ' ')" = "1"  && echo "hooks OK"  || echo "hooks FAIL"
+    test -f /tmp/nevronflow-framework/.claude/settings.json && echo "settings.json OK" || echo "settings.json FAIL"
 
-If any count is off, tell me which counts failed and STOP. Do not copy partial installs into nevron-core.
+If any check fails, tell me which failed and STOP. Do not copy partial installs into nevron-core.
+
+The settings.json is CRITICAL. It registers the PreToolUse hook that enforces delegation. Without settings.json, the hook file exists but never fires, and the whole framework's delegation enforcement is dead.
 
 ══ STEP 5: BACKUP existing .claude/ (if any) ══
 
@@ -1653,19 +1657,66 @@ If $NEVRON_CORE/.claude does not exist, skip this step.
     cp /tmp/nevronflow-framework/docs/ANALYTICS_CONTRIBUTION_GUIDE.md "$NEVRON_CORE/docs/"
     chmod +x "$NEVRON_CORE/.claude/hooks/enforce-delegation.sh"
 
-══ STEP 7: TEMPLATES (one by one, ASK BEFORE each) ══
+══ STEP 7: ROOT-LEVEL TEMPLATES (CLAUDE.md, BUSINESS_CONTEXT.md, COMPONENT_CATALOG.md) ══
 
-For each of the following, ONLY proceed if the file does not already exist at the nevron-core root. If the file exists, skip silently. If it is missing, ASK me individually.
+These live at the nevron-core REPO ROOT, not inside .claude/. Handle each individually. The CLAUDE.md case is important: it is where the whole NevronFlow workflow is described. If it is missing or stale, Claude will not know to use the framework even though the agents and skills are installed.
 
-    a) CLAUDE.md
-        If missing, ASK: "$NEVRON_CORE/CLAUDE.md does not exist. Copy the NevronFlow CLAUDE.md template? (y/n)"
-        If yes: cp /tmp/nevronflow-framework/templates/CLAUDE.md.template "$NEVRON_CORE/CLAUDE.md"
+  a) CLAUDE.md — THE MOST IMPORTANT TEMPLATE
 
-    b) BUSINESS_CONTEXT.md
-        Same pattern with /tmp/nevronflow-framework/templates/BUSINESS_CONTEXT.md.template
+     Check whether $NEVRON_CORE/CLAUDE.md exists.
 
-    c) COMPONENT_CATALOG.md
-        Same pattern with /tmp/nevronflow-framework/templates/COMPONENT_CATALOG.md
+     CASE 1: Does not exist.
+         ASK: "$NEVRON_CORE/CLAUDE.md does not exist. Copy the NevronFlow CLAUDE.md template? It defines the workflow (clarify, plan, delegate, verify, explain) and lists the agents and skills. (y/n)"
+         If yes: cp /tmp/nevronflow-framework/templates/CLAUDE.md.template "$NEVRON_CORE/CLAUDE.md"
+
+     CASE 2: Exists. Compare the existing file to the template.
+
+         DIFF_LINES=$(diff "$NEVRON_CORE/CLAUDE.md" /tmp/nevronflow-framework/templates/CLAUDE.md.template | wc -l | tr -d ' ')
+
+         If DIFF_LINES is small (less than 20): the files are essentially the same. Say "CLAUDE.md matches the NevronFlow template. Skipping." and move on.
+
+         If DIFF_LINES is large (20 or more): the existing CLAUDE.md does not match the NevronFlow-expected version. This usually means the user's CLAUDE.md predates the NevronFlow framework and does not reference the agents, skills, or delegation workflow. Tell me clearly:
+
+             "Your existing CLAUDE.md is substantially different from the NevronFlow template (~<N> lines differ).
+
+             NevronFlow agents and skills are installed, but the orchestrator (Claude, in a future session) reads CLAUDE.md to know HOW to use them:
+               - When to delegate to a surface agent vs edit directly
+               - When to invoke /nf:diagnose before fixing a bug
+               - When to invoke feature-planner and nevron-analytics-architect before implementing
+               - Which agents exist and what each is for
+
+             Without the NevronFlow CLAUDE.md, the framework is installed but inert. Claude will not know to use it.
+
+             Options:
+                (A) Back up your current CLAUDE.md and replace it with the NevronFlow template (RECOMMENDED).
+                    I will preserve your current CLAUDE.md as $NEVRON_CORE/CLAUDE.md.backup-<TS> so you can cherry-pick anything unique you want to merge back in later.
+                (B) Leave your CLAUDE.md as-is for now. Framework runtime (agents, skills, hook) works, but Claude will not consistently use it. You can manually merge the template later using diff $NEVRON_CORE/CLAUDE.md /tmp/... (note: the install is done at that point, so you would re-download the template from the framework repo).
+                (C) Show me a short summary of what will change before I decide.
+
+             Which one? (A / B / C)"
+
+         If A:
+             mv "$NEVRON_CORE/CLAUDE.md" "$NEVRON_CORE/CLAUDE.md.backup-$TIMESTAMP"
+             cp /tmp/nevronflow-framework/templates/CLAUDE.md.template "$NEVRON_CORE/CLAUDE.md"
+             Tell me: "Backed up previous CLAUDE.md and installed the NevronFlow version."
+         If B:
+             Skip. Tell me: "Leaving your CLAUDE.md unchanged. Framework runtime is installed but may not be fully exercised until you merge."
+         If C:
+             Show the diff briefly (first 40 lines of diff output), then ASK again with A or B.
+
+  b) BUSINESS_CONTEXT.md
+
+         If $NEVRON_CORE/BUSINESS_CONTEXT.md does not exist, ASK:
+             "$NEVRON_CORE/BUSINESS_CONTEXT.md does not exist. Copy the NevronFlow template? It is mostly empty placeholders (pricing model, customer segments, current priorities) for the team to fill in over time. (y/n)"
+         If yes: cp /tmp/nevronflow-framework/templates/BUSINESS_CONTEXT.md.template "$NEVRON_CORE/BUSINESS_CONTEXT.md"
+         If exists: skip silently.
+
+  c) COMPONENT_CATALOG.md
+
+         If $NEVRON_CORE/COMPONENT_CATALOG.md does not exist, ASK:
+             "$NEVRON_CORE/COMPONENT_CATALOG.md does not exist. Copy the NevronFlow template? It catalogues the reusable frontend components and backend patterns across the platform. (y/n)"
+         If yes: cp /tmp/nevronflow-framework/templates/COMPONENT_CATALOG.md "$NEVRON_CORE/COMPONENT_CATALOG.md"
+         If exists: skip silently.
 
 ══ STEP 8: CLEANUP ══
 
@@ -1674,11 +1725,13 @@ For each of the following, ONLY proceed if the file does not already exist at th
 ══ STEP 9: REPORT ══
 
 Tell me, as a clean summary:
-  - How many agents / skills / rules / hooks installed (verify against the counts from Step 4)
-  - Where the backup was created (if any), and how I can restore from it if needed
-  - Which templates were copied (if any)
-  - ACTION REQUIRED: restart Claude Code. Agents and skills are cached at session start; they will not load until I start a fresh session.
+  - Counts: how many agents / skills / rules / hooks installed + whether settings.json landed (critical for the hook to fire)
+  - Where backups were created (.claude.backup-<TS>, optionally CLAUDE.md.backup-<TS>), and how I can restore from them
+  - Which root templates were handled: copied / replaced / skipped
+  - The CLAUDE.md outcome specifically (Option A / B / C from Step 7.a). If I chose B, flag that the framework is installed but may be inert until I merge the template.
+  - ACTION REQUIRED: restart Claude Code. Agents, skills, hooks, and settings.json all load at session start; they will not take effect until I start a fresh session.
   - First test after restart: cd to my nevron-core directory, start Claude Code, try "/nf:plan" or ask "what agents do I have available?" to confirm the framework loaded.
+  - If the hook should be firing but isn't: confirm .claude/settings.json is present AND .claude/hooks/enforce-delegation.sh is executable. Both are required.
 
 IMPORTANT: during this install, you are ONLY installing. Do NOT start using any of the new agents, skills, or rules. Do not run /nf:plan, do not delegate to any nevron-* agent. The framework only becomes active in my NEXT session after a restart.`;
 
