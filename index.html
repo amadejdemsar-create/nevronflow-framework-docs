@@ -1713,6 +1713,7 @@ Confirm the clone is complete and matches expectations:
     test "$(ls /tmp/nevronflow-framework/.claude/rules  2>/dev/null | wc -l | tr -d ' ')" = "16" && echo "rules OK"  || echo "rules FAIL"
     test "$(ls /tmp/nevronflow-framework/.claude/hooks  2>/dev/null | wc -l | tr -d ' ')" = "1"  && echo "hooks OK"  || echo "hooks FAIL"
     test -f /tmp/nevronflow-framework/.claude/settings.json && echo "settings.json OK" || echo "settings.json FAIL"
+    test -d /tmp/nevronflow-framework/e2e && echo "e2e/ present OK" || echo "e2e/ MISSING"
 
 If any check fails, tell me which failed and STOP. Do not copy partial installs into nevron-core.
 
@@ -1734,6 +1735,15 @@ If $NEVRON_CORE/.claude does not exist, skip this step.
     mkdir -p "$NEVRON_CORE/docs"
     cp /tmp/nevronflow-framework/docs/ANALYTICS_CONTRIBUTION_GUIDE.md "$NEVRON_CORE/docs/"
     chmod +x "$NEVRON_CORE/.claude/hooks/enforce-delegation.sh"
+
+    # E2E tests (Playwright). Source only — node_modules installed on first use.
+    # Back up any existing e2e/ the user might have
+    if [ -d "$NEVRON_CORE/e2e" ]; then
+      mv "$NEVRON_CORE/e2e" "$NEVRON_CORE/e2e.backup-$TIMESTAMP"
+      Tell me: "Backed up existing e2e/ to e2e.backup-$TIMESTAMP"
+    fi
+    cp -R /tmp/nevronflow-framework/e2e "$NEVRON_CORE/e2e"
+    Tell me: "To run E2E tests later: cd $NEVRON_CORE/e2e && npm install && npx playwright install chromium && npm test"
 
 ══ STEP 7: ROOT-LEVEL TEMPLATES (CLAUDE.md, BUSINESS_CONTEXT.md, COMPONENT_CATALOG.md) ══
 
@@ -1803,7 +1813,7 @@ These live at the nevron-core REPO ROOT, not inside .claude/. Handle each indivi
 ══ STEP 9: REPORT ══
 
 Tell me, as a clean summary:
-  - Counts: how many agents / skills / rules / hooks installed + whether settings.json landed (critical for the hook to fire)
+  - Counts: how many agents / skills / rules / hooks installed + whether settings.json landed (critical for the hook to fire) + whether e2e/ landed
   - Where backups were created (.claude.backup-<TS>, optionally CLAUDE.md.backup-<TS>), and how I can restore from them
   - Which root templates were handled: copied / replaced / skipped
   - The CLAUDE.md outcome specifically (Option A / B / C from Step 7.a). If I chose B, flag that the framework is installed but may be inert until I merge the template.
