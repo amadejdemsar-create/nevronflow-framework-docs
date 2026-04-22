@@ -733,7 +733,16 @@
         <p>Copies a Claude Code prompt to your clipboard. Paste into a new Claude Code session; Claude does the rest.</p>
       </div>
       <button class="btn-install" id="install-btn" onclick="copyInstallPrompt()">Install into nevron-core</button>
-      <button class="btn-secondary" onclick="showModal()">Preview prompt</button>
+      <button class="btn-secondary" onclick="showInstallModal()">Preview</button>
+    </div>
+
+    <div class="install-bar">
+      <div class="install-bar-text">
+        <h3>Update an existing install</h3>
+        <p>Already installed? Copies an update prompt. Paste into Claude Code; it pulls the latest from the private framework repo, diffs your nevron-core .claude directory, backs up anything that changed, and re-syncs only the files that moved.</p>
+      </div>
+      <button class="btn-install" id="update-btn" onclick="copyUpdatePrompt()">Copy update prompt</button>
+      <button class="btn-secondary" onclick="showUpdateModal()">Preview</button>
     </div>
 
     <div class="hero-stats">
@@ -1520,20 +1529,38 @@
   </div>
 </div>
 
-<!-- MODAL -->
-<div class="modal-overlay" id="modal" onclick="if(event.target===this)hideModal()">
+<!-- INSTALL MODAL -->
+<div class="modal-overlay" id="installModal" onclick="if(event.target===this)hideInstallModal()">
   <div class="modal">
     <div class="modal-header">
       <h3>Install prompt</h3>
-      <button class="modal-close" onclick="hideModal()">×</button>
+      <button class="modal-close" onclick="hideInstallModal()">×</button>
     </div>
     <div class="modal-body">
-      <p style="color: var(--text-dim); font-size: 14px; margin-bottom: 16px;">Copy this prompt and paste it into a fresh Claude Code session. Claude will find your nevron-core project (or ask), clone this repo, and install the framework.</p>
-      <pre id="prompt-text"></pre>
+      <p style="color: var(--text-dim); font-size: 14px; margin-bottom: 16px;">Copy this prompt and paste it into a fresh Claude Code session. Claude finds your nevron-core project (or asks), clones the framework repo, and installs it.</p>
+      <pre id="install-prompt-text"></pre>
     </div>
     <div class="modal-footer">
-      <button class="btn-secondary" onclick="hideModal()">Close</button>
-      <button class="btn-install" onclick="copyInstallPrompt(); hideModal();">Copy to clipboard</button>
+      <button class="btn-secondary" onclick="hideInstallModal()">Close</button>
+      <button class="btn-install" onclick="copyInstallPrompt(); hideInstallModal();">Copy to clipboard</button>
+    </div>
+  </div>
+</div>
+
+<!-- UPDATE MODAL -->
+<div class="modal-overlay" id="updateModal" onclick="if(event.target===this)hideUpdateModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Update prompt</h3>
+      <button class="modal-close" onclick="hideUpdateModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <p style="color: var(--text-dim); font-size: 14px; margin-bottom: 16px;">Use this after the framework repo changes. Claude fetches the latest commit, diffs every rule, agent, skill, and hook against what you have installed in nevron-core/.claude/, backs up anything that differs, and re-syncs only the files that moved. BUSINESS_CONTEXT.md, COMPONENT_CATALOG.md, and any local customisations are left untouched.</p>
+      <pre id="update-prompt-text"></pre>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="hideUpdateModal()">Close</button>
+      <button class="btn-install" onclick="copyUpdatePrompt(); hideUpdateModal();">Copy to clipboard</button>
     </div>
   </div>
 </div>
@@ -1749,56 +1776,169 @@ function showToast(type, title, desc) {
   setTimeout(() => toast.classList.remove('show'), 3500);
 }
 
-async function copyInstallPrompt() {
-  const btn = document.getElementById('install-btn');
-  const original = btn.textContent;
+const UPDATE_PROMPT = `I already have the NevronFlow framework installed in my local nevron-core project, and I want to pull the latest changes from the framework repo. Update rules, agents, skills, and the hook that have changed; leave my BUSINESS_CONTEXT.md, COMPONENT_CATALOG.md, and any local customisations untouched.
 
+The framework source is at https://github.com/amadejdemsar-create/nevronflow-framework (PRIVATE, collaborator access required).
+
+Follow these steps. CONFIRM before overwriting anything. Do not guess paths.
+
+══ STEP 1: FIND my nevron-core checkout ══
+
+Do NOT assume a specific path. Search broadly and show me candidates:
+
+    find ~ -maxdepth 6 -type d \\( -iname "nevron-core" -o -iname "nevroncore" \\) 2>/dev/null
+    find /Users/Shared -maxdepth 5 -type d -iname "nevron-core" 2>/dev/null
+    find /opt /srv /workspaces -maxdepth 4 -type d -iname "nevron-core" 2>/dev/null
+
+For each candidate, verify it has .git, backend/ebiplatform, and a .claude directory (proof the framework is actually installed there). Present the candidates numbered. Ask me which one. Store as NEVRON_CORE.
+
+If no .claude directory exists under the chosen checkout, stop and tell me: "Framework is not installed in this project yet. Run the install prompt from https://amadejdemsar-create.github.io/nevronflow-framework-docs/ instead."
+
+══ STEP 2: FETCH THE LATEST FRAMEWORK ══
+
+    rm -rf /tmp/nevronflow-framework
+    git clone https://github.com/amadejdemsar-create/nevronflow-framework.git /tmp/nevronflow-framework
+
+If 404 or auth error, stop and tell me to verify collaborator access.
+
+Capture current and previous sha:
+    REMOTE_SHA=$(git -C /tmp/nevronflow-framework rev-parse HEAD)
+    echo "Remote HEAD: $REMOTE_SHA"
+    PREV_SHA=$([ -f "$NEVRON_CORE/.claude/.installed_sha" ] && cat "$NEVRON_CORE/.claude/.installed_sha" || echo "unknown")
+    echo "Previously installed: $PREV_SHA"
+
+══ STEP 3: DIFF each class, do not overwrite yet ══
+
+3a. Rules: for each file in /tmp/nevronflow-framework/.claude/rules/*.md
+    NEW if missing in $NEVRON_CORE/.claude/rules/
+    CHANGED if different
+    UNCHANGED if identical
+
+3b. Agents: same pattern for /tmp/nevronflow-framework/.claude/agents/*.md
+
+3c. Skills: same pattern for /tmp/nevronflow-framework/.claude/skills/*.md and the nf/ subfolder
+
+3d. Hooks: compare /tmp/nevronflow-framework/.claude/hooks/*.sh
+
+3e. Settings: compare /tmp/nevronflow-framework/.claude/settings.json with my installed copy. Flag any hook registration change explicitly.
+
+3f. Documents: compare docs/ANALYTICS_CONTRIBUTION_GUIDE.md and any other shared doc from the framework.
+
+Present a summary:
+    | Class     | NEW | CHANGED | UNCHANGED |
+    | Rules     | N   | N       | N         |
+    | Agents    | N   | N       | N         |
+    | Skills    | N   | N       | N         |
+    | Hooks     | N   | N       | N         |
+    | Settings  |     |         |           |
+    | Docs      | N   | N       | N         |
+
+List every NEW and CHANGED file by name. Show diff stats per file.
+
+══ STEP 4: DO NOT TOUCH MY LOCAL DATA ══
+
+Explicitly exclude from update:
+  - $NEVRON_CORE/CLAUDE.md (my local doctrine)
+  - $NEVRON_CORE/BUSINESS_CONTEXT.md
+  - $NEVRON_CORE/COMPONENT_CATALOG.md
+  - Anything under $NEVRON_CORE/.claude/ that is not in /tmp/nevronflow-framework/.claude/ (local additions stay)
+  - Any file with a .local.* extension
+
+If any of those changed in the framework repo and I might want the new version, FLAG it but do not overwrite. Ask me per file.
+
+══ STEP 5: CONFIRM ══
+
+Ask me: "Proceed with update? (yes / no / show full diff of <file>)"
+
+On "no", stop. Nothing is overwritten.
+
+══ STEP 6: BACKUP ══
+
+    TS=$(date +%Y%m%d-%H%M%S)
+    cp -R $NEVRON_CORE/.claude $NEVRON_CORE/.claude.backup-$TS
+
+Tell me the backup path.
+
+══ STEP 7: APPLY ══
+
+Copy only NEW and CHANGED files into $NEVRON_CORE/.claude/, preserving subdirectory structure. Set the hook to executable again if it was overwritten:
+    chmod +x $NEVRON_CORE/.claude/hooks/*.sh
+
+If settings.json changed, diff the new one against my current and ASK before overwriting. This file also contains user-specific config that I may have customised; do not just replace.
+
+Record new installed sha:
+    echo "$REMOTE_SHA" > $NEVRON_CORE/.claude/.installed_sha
+
+══ STEP 8: VERIFY ══
+
+    ls $NEVRON_CORE/.claude/rules/ | wc -l
+    ls $NEVRON_CORE/.claude/agents/ | wc -l
+    ls $NEVRON_CORE/.claude/skills/ | wc -l
+    [ -x $NEVRON_CORE/.claude/hooks/enforce-delegation.sh ] && echo "hook executable"
+
+══ STEP 9: REPORT ══
+
+    "Updated from $PREV_SHA to $REMOTE_SHA.
+     Backups: $NEVRON_CORE/.claude.backup-$TS
+     Counts now: <rules> rules / <agents> agents / <skills> skills / 1 hook
+     Settings.json: <unchanged | updated>
+     ACTION REQUIRED: restart Claude Code. The new rules, agents, skills, and hook take effect only on a fresh session.
+     Full changelog: https://github.com/amadejdemsar-create/nevronflow-framework/commits/main"
+
+Start with step 1.`;
+
+async function copyToClipboard(text, btnId, toastTitle) {
+  const btn = document.getElementById(btnId);
+  const original = btn.textContent;
   try {
-    await navigator.clipboard.writeText(INSTALL_PROMPT);
+    await navigator.clipboard.writeText(text);
     btn.textContent = 'Copied ✓';
     btn.classList.add('success');
-    showToast('success', 'Install prompt copied', 'Paste into a new Claude Code session.');
-
-    setTimeout(() => {
-      btn.textContent = original;
-      btn.classList.remove('success');
-    }, 2500);
+    showToast('success', toastTitle, 'Paste into a new Claude Code session.');
   } catch (err) {
-    // Fallback for older browsers
     const ta = document.createElement('textarea');
-    ta.value = INSTALL_PROMPT;
+    ta.value = text;
     document.body.appendChild(ta);
     ta.select();
     try {
       document.execCommand('copy');
       btn.textContent = 'Copied ✓';
       btn.classList.add('success');
-      showToast('success', 'Install prompt copied', 'Paste into a new Claude Code session.');
+      showToast('success', toastTitle, 'Paste into a new Claude Code session.');
     } catch {
       btn.textContent = 'Copy failed';
       btn.classList.add('error');
-      showToast('error', 'Could not copy', 'Click "Preview prompt" and copy manually.');
+      showToast('error', 'Could not copy', 'Click "Preview" and copy manually.');
     }
     document.body.removeChild(ta);
-    setTimeout(() => {
-      btn.textContent = original;
-      btn.classList.remove('success', 'error');
-    }, 2500);
   }
+  setTimeout(() => {
+    btn.textContent = original;
+    btn.classList.remove('success', 'error');
+  }, 2500);
 }
 
-function showModal() {
-  document.getElementById('prompt-text').textContent = INSTALL_PROMPT;
-  document.getElementById('modal').classList.add('show');
-}
+function copyInstallPrompt() { return copyToClipboard(INSTALL_PROMPT, 'install-btn', 'Install prompt copied'); }
+function copyUpdatePrompt() { return copyToClipboard(UPDATE_PROMPT, 'update-btn', 'Update prompt copied'); }
 
-function hideModal() {
-  document.getElementById('modal').classList.remove('show');
+function showInstallModal() {
+  document.getElementById('install-prompt-text').textContent = INSTALL_PROMPT;
+  document.getElementById('installModal').classList.add('show');
 }
+function hideInstallModal() { document.getElementById('installModal').classList.remove('show'); }
 
-// Close modal on Escape
+function showUpdateModal() {
+  document.getElementById('update-prompt-text').textContent = UPDATE_PROMPT;
+  document.getElementById('updateModal').classList.add('show');
+}
+function hideUpdateModal() { document.getElementById('updateModal').classList.remove('show'); }
+
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') hideModal();
+  if (e.key !== 'Escape') return;
+  const im = document.getElementById('installModal');
+  const um = document.getElementById('updateModal');
+  if (im && im.classList.contains('show')) hideInstallModal();
+  if (um && um.classList.contains('show')) hideUpdateModal();
 });
 </script>
 
