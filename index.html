@@ -4,103 +4,135 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>NevronFlow Framework</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/primeicons/primeicons.css">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   :root {
-    --bg: #0a0b0f;
-    --bg-card: #13151b;
-    --bg-elevated: #1a1d25;
-    --border: #23262f;
-    --border-strong: #2f333d;
-    --text: #e8eaf0;
-    --text-dim: #9aa0ae;
-    --text-faint: #5a5e6b;
-    --accent: #7c9cff;
-    --accent-hover: #93aeff;
-    --green: #58d18a;
-    --amber: #f0b95e;
-    --magenta: #d279e0;
-    --cyan: #5ec5d1;
-    --red: #e85a5a;
+    /* Primary brand palette */
+    --nevron-color-m1: #000126;
+    --nevron-color-m2: #002391;
+    --nevron-color-m3: #1B92FF;
+    --nevron-color-m4: #73C7FF;
+    --nevron-color-m5: #C3E9FF;
+    --nevron-color-white: #FFFFFF;
+
+    /* Supporting */
+    --nevron-color-green: #36A058;
+    --nevron-color-yellow: #F6A900;
+    --nevron-color-orange: #E56600;
+    --nevron-color-red: #DA2025;
+
+    /* Dark-theme surface aliases (page-local) */
+    --n-bg: var(--nevron-color-m1);
+    --n-panel: color-mix(in srgb, var(--nevron-color-m2) 12%, var(--nevron-color-m1));
+    --n-panel-strong: color-mix(in srgb, var(--nevron-color-m2) 22%, var(--nevron-color-m1));
+    --n-panel-hover: color-mix(in srgb, var(--nevron-color-m2) 30%, var(--nevron-color-m1));
+    --n-border: rgba(27, 146, 255, 0.14);
+    --n-border-strong: rgba(27, 146, 255, 0.28);
+
+    /* Motion */
+    --nevron-transition-fast: 150ms ease;
+    --nevron-transition-base: 250ms ease;
+    --nevron-transition-slow: 350ms ease;
+
+    /* Typography */
+    --nevron-font-family: 'Neue Haas Unica', 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
+    --nevron-font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+    /* Mapped local aliases */
+    --bg: var(--nevron-color-m1);
+    --bg-card: var(--n-panel);
+    --bg-elevated: var(--n-panel-strong);
+    --border: var(--n-border);
+    --border-strong: var(--n-border-strong);
+    --text: var(--nevron-color-white);
+    --text-dim: #B4B6B9;
+    --text-faint: #707379;
+    --accent: var(--nevron-color-m3);
+    --accent-hover: var(--nevron-color-m4);
+    --green: var(--nevron-color-green);
+    --amber: var(--nevron-color-yellow);
+    --red: var(--nevron-color-red);
     --shadow: 0 4px 24px rgba(0,0,0,0.4);
   }
   html { scroll-behavior: smooth; }
   body {
     background: var(--bg);
     color: var(--text);
-    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+    font-family: var(--nevron-font-family);
     line-height: 1.6;
-    font-size: 15px;
+    font-size: 1rem;
   }
-  .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
 
   /* HERO */
   .hero {
-    background: linear-gradient(180deg, rgba(124,156,255,0.08) 0%, transparent 100%);
+    background: radial-gradient(ellipse at top, color-mix(in srgb, var(--nevron-color-m3) 12%, var(--nevron-color-m1)), var(--nevron-color-m1) 70%);
     border-bottom: 1px solid var(--border);
-    padding: 80px 0 64px;
+    padding: 5rem 0 4rem;
   }
-  .hero-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+  .hero-inner { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
   .eyebrow {
     color: var(--accent);
-    font-size: 13px;
+    font-size: 0.8125rem;
     font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    margin-bottom: 16px;
+    margin-bottom: 1rem;
   }
   h1 {
-    font-size: 52px;
+    font-size: 3rem;
     font-weight: 700;
     letter-spacing: -0.02em;
     line-height: 1.1;
-    margin-bottom: 20px;
+    margin-bottom: 1.25rem;
   }
   .hero p.lead {
-    font-size: 20px;
+    font-size: 1.125rem;
     color: var(--text-dim);
     max-width: 700px;
-    margin-bottom: 32px;
+    margin-bottom: 2rem;
   }
   .hero-stats {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 24px;
+    gap: 1.5rem;
     max-width: 600px;
-    margin-top: 48px;
+    margin-top: 3rem;
   }
   .stat {
-    padding: 20px;
+    padding: 1.25rem;
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 10px;
+    border-radius: 0;
     text-align: left;
   }
   .stat .num {
-    font-size: 32px;
+    font-size: 2rem;
     font-weight: 700;
     color: var(--text);
     line-height: 1;
   }
   .stat .label {
-    font-size: 12px;
+    font-size: 0.75rem;
     color: var(--text-dim);
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    margin-top: 8px;
+    margin-top: 0.5rem;
   }
 
   /* INSTALL BUTTON */
   .install-bar {
     background: var(--bg-card);
     border: 1px solid var(--border-strong);
-    border-radius: 12px;
-    padding: 24px 28px;
-    margin-top: 36px;
+    border-radius: 0;
+    padding: 1.5rem 1.75rem;
+    margin-top: 2.25rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 24px;
+    gap: 1.5rem;
     flex-wrap: wrap;
   }
   .install-bar-text {
@@ -108,108 +140,108 @@
     min-width: 280px;
   }
   .install-bar-text h3 {
-    font-size: 18px;
+    font-size: 1.125rem;
     font-weight: 600;
-    margin-bottom: 4px;
+    margin-bottom: 0.25rem;
   }
   .install-bar-text p {
     color: var(--text-dim);
-    font-size: 14px;
+    font-size: 0.875rem;
     margin: 0;
   }
   .btn-install {
     background: var(--accent);
-    color: #0a0b0f;
+    color: var(--nevron-color-m1);
     border: none;
-    padding: 14px 28px;
-    font-size: 15px;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
     font-weight: 600;
-    border-radius: 8px;
+    border-radius: 0;
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: all var(--nevron-transition-fast);
     white-space: nowrap;
     font-family: inherit;
   }
   .btn-install:hover {
     background: var(--accent-hover);
     transform: translateY(-1px);
-    box-shadow: 0 6px 20px rgba(124,156,255,0.25);
+    box-shadow: 0 6px 20px rgba(27, 146, 255, 0.25);
   }
   .btn-install:active {
     transform: translateY(0);
   }
   .btn-install.success {
     background: var(--green);
-    color: #0a0b0f;
+    color: var(--nevron-color-m1);
   }
   .btn-install.error {
     background: var(--red);
-    color: #fff;
+    color: var(--nevron-color-white);
   }
 
   /* NAV */
   .nav {
-    background: rgba(10,11,15,0.85);
+    background: rgba(0, 1, 38, 0.85);
     backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--border);
     position: sticky;
     top: 0;
-    z-index: 10;
-    padding: 16px 0;
+    z-index: 200;
+    padding: 1rem 0;
   }
   .nav-inner {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 24px;
+    padding: 0 1.5rem;
     display: flex;
-    gap: 28px;
+    gap: 1.75rem;
     overflow-x: auto;
     scrollbar-width: thin;
   }
   .nav a {
     color: var(--text-dim);
     text-decoration: none;
-    font-size: 14px;
+    font-size: 0.875rem;
     font-weight: 500;
     white-space: nowrap;
-    transition: color 0.15s;
+    transition: color var(--nevron-transition-fast);
   }
   .nav a:hover { color: var(--text); }
 
   /* SECTIONS */
-  section { padding: 72px 0; border-bottom: 1px solid var(--border); }
+  section { padding: 5rem 0; border-bottom: 1px solid var(--border); }
   section:last-child { border-bottom: none; }
   h2 {
-    font-size: 32px;
-    font-weight: 700;
+    font-size: 1.75rem;
+    font-weight: 600;
     letter-spacing: -0.01em;
-    margin-bottom: 12px;
+    margin-bottom: 0.75rem;
   }
   h2 + p.section-lead {
     color: var(--text-dim);
-    font-size: 17px;
+    font-size: 1.125rem;
     max-width: 720px;
-    margin-bottom: 40px;
+    margin-bottom: 2.5rem;
   }
   h3 {
-    font-size: 20px;
+    font-size: 1.375rem;
     font-weight: 600;
-    margin-bottom: 16px;
-    margin-top: 32px;
+    margin-bottom: 1rem;
+    margin-top: 2rem;
   }
 
   /* ARCHITECTURE DIAGRAM */
   .arch {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 32px;
-    margin-bottom: 32px;
+    border-radius: 0;
+    padding: 2rem;
+    margin-bottom: 2rem;
   }
   .arch pre {
     color: var(--text-dim);
-    font-family: "SF Mono", Menlo, monospace;
-    font-size: 12px;
+    font-family: var(--nevron-font-mono);
+    font-size: 0.75rem;
     line-height: 1.5;
     overflow-x: auto;
   }
@@ -218,39 +250,39 @@
   .loops {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 16px;
-    margin-top: 24px;
+    gap: 1rem;
+    margin-top: 1.5rem;
   }
   .loop-card {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 20px;
-    transition: border-color 0.15s;
+    border-radius: 0;
+    padding: 1.25rem;
+    transition: border-color var(--nevron-transition-fast);
   }
   .loop-card:hover { border-color: var(--border-strong); }
   .loop-num {
     color: var(--accent);
-    font-size: 13px;
+    font-size: 0.8125rem;
     font-weight: 600;
-    margin-bottom: 8px;
+    margin-bottom: 0.5rem;
   }
   .loop-title {
-    font-size: 15px;
+    font-size: 0.9375rem;
     font-weight: 600;
-    margin-bottom: 6px;
+    margin-bottom: 0.375rem;
   }
   .loop-desc {
     color: var(--text-dim);
-    font-size: 13px;
+    font-size: 0.8125rem;
   }
 
   /* FOUR-LAYER PATTERN */
   .pattern {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-    margin-top: 24px;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
   }
   @media (max-width: 720px) {
     .pattern { grid-template-columns: 1fr 1fr; }
@@ -258,18 +290,18 @@
   .pattern-card {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 20px;
+    border-radius: 0;
+    padding: 1.25rem;
     position: relative;
   }
   .pattern-card::after {
     content: "→";
     position: absolute;
-    right: -12px;
+    right: -0.75rem;
     top: 50%;
     transform: translateY(-50%);
     color: var(--text-faint);
-    font-size: 18px;
+    font-size: 1.125rem;
     z-index: 1;
   }
   .pattern-card:last-child::after { display: none; }
@@ -277,87 +309,87 @@
     .pattern-card::after { display: none; }
   }
   .pattern-card .step {
-    font-size: 11px;
+    font-size: 0.6875rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--text-faint);
-    margin-bottom: 8px;
+    margin-bottom: 0.5rem;
   }
   .pattern-card .name {
-    font-size: 16px;
+    font-size: 1rem;
     font-weight: 600;
-    margin-bottom: 6px;
+    margin-bottom: 0.375rem;
   }
   .pattern-card .detail {
     color: var(--text-dim);
-    font-size: 13px;
+    font-size: 0.8125rem;
   }
 
   /* GRID OF ITEMS (rules, agents, skills) */
   .grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-    gap: 14px;
+    gap: 0.875rem;
   }
   .item {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 18px 20px;
-    transition: border-color 0.15s, transform 0.15s;
+    border-radius: 0;
+    padding: 1.125rem 1.25rem;
+    transition: border-color var(--nevron-transition-fast), transform var(--nevron-transition-fast);
   }
   .item:hover {
     border-color: var(--border-strong);
   }
   .item-name {
-    font-family: "SF Mono", Menlo, monospace;
-    font-size: 13px;
+    font-family: var(--nevron-font-mono);
+    font-size: 0.8125rem;
     font-weight: 600;
     color: var(--text);
-    margin-bottom: 6px;
+    margin-bottom: 0.375rem;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 0.5rem;
     flex-wrap: wrap;
   }
   .item-desc {
     color: var(--text-dim);
-    font-size: 13px;
+    font-size: 0.8125rem;
     line-height: 1.5;
   }
   .tag {
     display: inline-block;
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-size: 10px;
+    padding: 0.125rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.625rem;
     font-weight: 600;
     letter-spacing: 0.03em;
     text-transform: uppercase;
-    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: var(--nevron-font-family);
     color: var(--text);
   }
-  .tag.readonly { background: rgba(124,156,255,0.15); color: var(--accent); }
-  .tag.write { background: rgba(88,209,138,0.15); color: var(--green); }
-  .tag.new { background: rgba(210,121,224,0.15); color: var(--magenta); }
-  .tag.required { background: rgba(240,185,94,0.15); color: var(--amber); }
-  .tag.blocker { background: rgba(232,90,90,0.15); color: var(--red); }
+  .tag.readonly { background: rgba(27, 146, 255, 0.15); color: var(--accent); }
+  .tag.write { background: rgba(54, 160, 88, 0.15); color: var(--green); }
+  .tag.new { background: rgba(0, 35, 145, 0.2); color: var(--nevron-color-m4); }
+  .tag.required { background: rgba(246, 169, 0, 0.15); color: var(--amber); }
+  .tag.blocker { background: rgba(218, 32, 37, 0.15); color: var(--red); }
 
   /* SUBGROUP HEADERS */
   .subgroup {
-    margin-top: 40px;
-    margin-bottom: 20px;
-    padding-bottom: 12px;
+    margin-top: 2.5rem;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
     border-bottom: 1px solid var(--border);
   }
   .subgroup h4 {
-    font-size: 16px;
+    font-size: 1rem;
     font-weight: 600;
     color: var(--text);
-    margin-bottom: 4px;
+    margin-bottom: 0.25rem;
   }
   .subgroup p {
     color: var(--text-dim);
-    font-size: 14px;
+    font-size: 0.875rem;
     margin: 0;
   }
 
@@ -365,34 +397,34 @@
   .roles {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-top: 24px;
+    gap: 1rem;
+    margin-top: 1.5rem;
   }
   @media (max-width: 720px) { .roles { grid-template-columns: 1fr; } }
   .role-card {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 24px;
+    border-radius: 0;
+    padding: 1.5rem;
   }
   .role-card.claude { border-top: 3px solid var(--accent); }
-  .role-card.agents { border-top: 3px solid var(--green); }
+  .role-card.agents { border-top: 3px solid var(--nevron-color-m4); }
   .role-card.hook   { border-top: 3px solid var(--red); }
   .role-card h4 {
-    font-size: 15px;
+    font-size: 0.9375rem;
     font-weight: 600;
     color: var(--text);
-    margin-bottom: 4px;
+    margin-bottom: 0.25rem;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 0.625rem;
   }
   .role-card .sub {
-    font-size: 12px;
+    font-size: 0.75rem;
     color: var(--text-faint);
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    margin-bottom: 16px;
+    margin-bottom: 1rem;
   }
   .role-card ul {
     list-style: none;
@@ -400,13 +432,13 @@
     margin: 0;
   }
   .role-card li {
-    font-size: 13.5px;
+    font-size: 0.84375rem;
     color: var(--text-dim);
-    padding: 8px 0;
+    padding: 0.5rem 0;
     border-bottom: 1px solid var(--border);
     display: flex;
     align-items: start;
-    gap: 10px;
+    gap: 0.625rem;
   }
   .role-card li:last-child { border-bottom: none; }
   .role-card li::before {
@@ -419,19 +451,19 @@
   .wiring-wrapper {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 10px;
+    border-radius: 0;
     overflow: hidden;
-    margin-top: 24px;
+    margin-top: 1.5rem;
   }
   .wiring-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 13.5px;
+    font-size: 0.84375rem;
   }
   .wiring-table th {
     text-align: left;
-    padding: 14px 20px;
-    font-size: 11px;
+    padding: 0.875rem 1.25rem;
+    font-size: 0.6875rem;
     text-transform: uppercase;
     letter-spacing: 0.06em;
     color: var(--text-faint);
@@ -440,40 +472,40 @@
     background: var(--bg-elevated);
   }
   .wiring-table td {
-    padding: 14px 20px;
+    padding: 0.875rem 1.25rem;
     border-bottom: 1px solid var(--border);
     vertical-align: top;
   }
   .wiring-table tr:last-child td { border-bottom: none; }
-  .wiring-table tr:hover td { background: rgba(124,156,255,0.03); }
+  .wiring-table tr:hover td { background: rgba(27, 146, 255, 0.03); }
   .wiring-table code {
-    font-family: "SF Mono", Menlo, monospace;
-    font-size: 12px;
+    font-family: var(--nevron-font-mono);
+    font-size: 0.75rem;
     color: var(--accent);
-    background: rgba(124,156,255,0.08);
-    padding: 2px 6px;
-    border-radius: 4px;
+    background: rgba(27, 146, 255, 0.08);
+    padding: 0.125rem 0.375rem;
+    border-radius: 0.25rem;
     white-space: nowrap;
   }
   .wiring-table .agent-chip {
     display: inline-block;
-    margin: 2px 4px 2px 0;
-    padding: 3px 8px;
-    background: rgba(88,209,138,0.1);
-    color: var(--green);
-    border-radius: 4px;
-    font-family: "SF Mono", Menlo, monospace;
-    font-size: 11px;
+    margin: 0.125rem 0.25rem 0.125rem 0;
+    padding: 0.1875rem 0.5rem;
+    background: rgba(115, 199, 255, 0.1);
+    color: var(--nevron-color-m4);
+    border-radius: 0.25rem;
+    font-family: var(--nevron-font-mono);
+    font-size: 0.6875rem;
     font-weight: 500;
   }
   .wiring-table .agent-chip.readonly {
-    background: rgba(124,156,255,0.1);
+    background: rgba(27, 146, 255, 0.1);
     color: var(--accent);
   }
   .wiring-table .none {
     color: var(--text-faint);
     font-style: italic;
-    font-size: 12px;
+    font-size: 0.75rem;
   }
   .wiring-table td.purpose {
     color: var(--text-dim);
@@ -484,24 +516,24 @@
   .flow {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 28px;
-    margin-bottom: 20px;
+    border-radius: 0;
+    padding: 1.75rem;
+    margin-bottom: 1.25rem;
   }
   .flow-header {
     border-bottom: 1px solid var(--border);
-    padding-bottom: 16px;
-    margin-bottom: 20px;
+    padding-bottom: 1rem;
+    margin-bottom: 1.25rem;
   }
   .flow-header .trigger {
-    font-size: 11px;
+    font-size: 0.6875rem;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: var(--text-faint);
-    margin-bottom: 6px;
+    margin-bottom: 0.375rem;
   }
   .flow-header .request {
-    font-size: 17px;
+    font-size: 1.0625rem;
     font-weight: 600;
     color: var(--text);
     font-style: italic;
@@ -509,126 +541,126 @@
   .flow-steps {
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 0.875rem;
   }
   .flow-step {
     display: flex;
-    gap: 16px;
+    gap: 1rem;
     align-items: flex-start;
   }
   .flow-step-num {
     flex-shrink: 0;
-    width: 28px;
-    height: 28px;
+    width: 1.75rem;
+    height: 1.75rem;
     border-radius: 50%;
     background: var(--bg-elevated);
     border: 1px solid var(--border-strong);
     color: var(--text-dim);
-    font-size: 12px;
+    font-size: 0.75rem;
     font-weight: 600;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: "SF Mono", Menlo, monospace;
+    font-family: var(--nevron-font-mono);
   }
   .flow-step-body {
     flex: 1;
-    padding-top: 3px;
+    padding-top: 0.1875rem;
   }
   .flow-step-actor {
-    font-size: 11px;
+    font-size: 0.6875rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     font-weight: 600;
-    margin-bottom: 2px;
+    margin-bottom: 0.125rem;
   }
   .flow-step-actor.claude { color: var(--accent); }
-  .flow-step-actor.agent { color: var(--green); }
+  .flow-step-actor.agent { color: var(--nevron-color-m4); }
   .flow-step-actor.skill { color: var(--amber); }
-  .flow-step-actor.user { color: var(--magenta); }
+  .flow-step-actor.user { color: var(--nevron-color-white); }
   .flow-step-actor.hook { color: var(--red); }
   .flow-step-action {
-    font-size: 14px;
+    font-size: 0.875rem;
     color: var(--text);
     line-height: 1.5;
   }
   .flow-step-action code {
-    font-family: "SF Mono", Menlo, monospace;
-    font-size: 12px;
+    font-family: var(--nevron-font-mono);
+    font-size: 0.75rem;
     color: var(--accent);
-    background: rgba(124,156,255,0.08);
-    padding: 2px 6px;
-    border-radius: 4px;
+    background: rgba(27, 146, 255, 0.08);
+    padding: 0.125rem 0.375rem;
+    border-radius: 0.25rem;
   }
   .flow-step-detail {
-    font-size: 12.5px;
+    font-size: 0.78125rem;
     color: var(--text-dim);
-    margin-top: 4px;
+    margin-top: 0.25rem;
   }
 
   /* DECISION TREE */
   .tree {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 28px;
-    margin-top: 24px;
+    border-radius: 0;
+    padding: 1.75rem;
+    margin-top: 1.5rem;
   }
   .tree pre {
     color: var(--text-dim);
-    font-family: "SF Mono", Menlo, monospace;
-    font-size: 12px;
+    font-family: var(--nevron-font-mono);
+    font-size: 0.75rem;
     line-height: 1.65;
     overflow-x: auto;
   }
   .tree pre .keyword { color: var(--accent); font-weight: 600; }
-  .tree pre .agent-name { color: var(--green); }
+  .tree pre .agent-name { color: var(--nevron-color-m4); }
   .tree pre .skill-name { color: var(--amber); }
   .tree pre .hook-name { color: var(--red); }
 
   /* FOOTER */
   footer {
-    padding: 48px 0;
+    padding: 3rem 0;
     text-align: center;
     color: var(--text-faint);
-    font-size: 13px;
+    font-size: 0.8125rem;
   }
-  footer a { color: var(--text-dim); text-decoration: none; }
-  footer a:hover { color: var(--text); }
+  footer a { color: var(--text-dim); text-decoration: none; transition: color var(--nevron-transition-fast); }
+  footer a:hover { color: var(--text); text-decoration: underline; }
 
   /* TOAST */
   .toast {
     position: fixed;
-    bottom: 24px;
-    right: 24px;
+    bottom: 1.5rem;
+    right: 1.5rem;
     background: var(--bg-elevated);
     border: 1px solid var(--border-strong);
-    border-radius: 10px;
-    padding: 14px 20px;
+    border-radius: 0;
+    padding: 0.875rem 1.25rem;
     box-shadow: var(--shadow);
     display: none;
     align-items: center;
-    gap: 10px;
-    z-index: 100;
+    gap: 0.625rem;
+    z-index: 500;
     max-width: 360px;
   }
   .toast.show { display: flex; }
   .toast.success { border-color: var(--green); }
   .toast.error { border-color: var(--red); }
   .toast-icon {
-    font-size: 18px;
+    font-size: 1.125rem;
     flex-shrink: 0;
   }
   .toast-content {
     flex: 1;
   }
   .toast-title {
-    font-size: 14px;
+    font-size: 0.875rem;
     font-weight: 600;
-    margin-bottom: 2px;
+    margin-bottom: 0.125rem;
   }
   .toast-desc {
-    font-size: 13px;
+    font-size: 0.8125rem;
     color: var(--text-dim);
   }
 
@@ -641,14 +673,14 @@
     display: none;
     align-items: center;
     justify-content: center;
-    z-index: 200;
-    padding: 20px;
+    z-index: 400;
+    padding: 1.25rem;
   }
   .modal-overlay.show { display: flex; }
   .modal {
     background: var(--bg-card);
     border: 1px solid var(--border-strong);
-    border-radius: 12px;
+    border-radius: 0;
     max-width: 820px;
     width: 100%;
     max-height: 85vh;
@@ -657,14 +689,14 @@
     box-shadow: var(--shadow);
   }
   .modal-header {
-    padding: 20px 24px;
+    padding: 1.25rem 1.5rem;
     border-bottom: 1px solid var(--border);
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
   .modal-header h3 {
-    font-size: 17px;
+    font-size: 1.0625rem;
     font-weight: 600;
     margin: 0;
   }
@@ -672,22 +704,27 @@
     background: transparent;
     border: none;
     color: var(--text-dim);
-    font-size: 24px;
+    font-size: 1.25rem;
     cursor: pointer;
-    padding: 0 4px;
+    padding: 0.25rem;
+    line-height: 1;
+    transition: color var(--nevron-transition-fast);
+  }
+  .modal-close:hover {
+    color: var(--text);
   }
   .modal-body {
-    padding: 24px;
+    padding: 1.5rem;
     overflow-y: auto;
     flex: 1;
   }
   .modal pre {
     background: var(--bg);
     border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 16px;
-    font-family: "SF Mono", Menlo, monospace;
-    font-size: 12px;
+    border-radius: 0;
+    padding: 1rem;
+    font-family: var(--nevron-font-mono);
+    font-size: 0.75rem;
     line-height: 1.6;
     color: var(--text-dim);
     overflow-x: auto;
@@ -695,34 +732,46 @@
     word-break: break-word;
   }
   .modal-footer {
-    padding: 16px 24px;
+    padding: 1rem 1.5rem;
     border-top: 1px solid var(--border);
     display: flex;
     justify-content: flex-end;
-    gap: 12px;
+    gap: 0.75rem;
   }
   .btn-secondary {
     background: transparent;
     color: var(--text-dim);
     border: 1px solid var(--border-strong);
-    padding: 10px 18px;
-    font-size: 14px;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.875rem;
     font-weight: 500;
-    border-radius: 8px;
+    border-radius: 0;
     cursor: pointer;
     font-family: inherit;
+    transition: all var(--nevron-transition-fast);
   }
   .btn-secondary:hover {
     color: var(--text);
     border-color: var(--text-dim);
+  }
+
+  /* Focus styles (P1-3) */
+  .btn-install:focus-visible,
+  .btn-secondary:focus-visible,
+  .modal-close:focus-visible,
+  .nav a:focus-visible {
+    outline: 2px solid var(--nevron-color-m4);
+    outline-offset: 2px;
   }
 </style>
 </head>
 <body>
 
 <!-- HERO -->
+<main>
 <div class="hero">
   <div class="hero-inner">
+    <img src="./nevron-logo.svg" alt="Nevron" style="width: 7.5rem; height: auto; margin-bottom: 1.5rem;">
     <div class="eyebrow">Claude Code Framework</div>
     <h1>NevronFlow</h1>
     <p class="lead">Structured development framework for building and maintaining the NevronCore hospitality platform. Doctrine, agents, skills, and enforcement hooks in one layered system.</p>
@@ -863,7 +912,7 @@
       </div>
     </div>
 
-    <p style="color: var(--text-dim); font-size: 14px; margin-top: 20px;">Example: analytics. Doctrine = <code>ANALYTICS_CONTRIBUTION_GUIDE.md</code>, rule = <code>analytics-for-new-features.md</code>, agent = <code>nevron-analytics-architect</code>, skill = <code>/nf:add-analytics</code>.</p>
+    <p style="color: var(--text-dim); font-size: 0.875rem; margin-top: 1.25rem;">Example: analytics. Doctrine = <code>ANALYTICS_CONTRIBUTION_GUIDE.md</code>, rule = <code>analytics-for-new-features.md</code>, agent = <code>nevron-analytics-architect</code>, skill = <code>/nf:add-analytics</code>.</p>
   </div>
 </section>
 
@@ -874,7 +923,7 @@
     <p class="section-lead">Claude is the orchestrator, not the implementer. It reads your request, decides what to delegate, invokes skills as slash commands, and is stopped by the hook whenever it tries to edit source code without going through a surface agent.</p>
 
     <h3>Who does what</h3>
-    <p style="color: var(--text-dim); font-size: 14px; margin-bottom: 24px;">Three actors: you, Claude (the orchestrator), and the agents. The hook is not an actor but a mechanical gate. Each has a clear lane.</p>
+    <p style="color: var(--text-dim); font-size: 0.875rem; margin-bottom: 1.5rem;">Three actors: you, Claude (the orchestrator), and the agents. The hook is not an actor but a mechanical gate. Each has a clear lane.</p>
 
     <div class="roles">
       <div class="role-card claude">
@@ -907,7 +956,7 @@
       </div>
     </div>
 
-    <div class="role-card hook" style="margin-top: 16px;">
+    <div class="role-card hook" style="margin-top: 1rem;">
       <h4>The hook (enforce-delegation.sh)</h4>
       <div class="sub">Blocks illegal actions at the tool-call level</div>
       <ul>
@@ -919,8 +968,8 @@
       </ul>
     </div>
 
-    <h3 style="margin-top: 40px;">The decision tree</h3>
-    <p style="color: var(--text-dim); font-size: 14px; margin-bottom: 0;">Claude runs this decision tree on every user request. It's encoded in <code>CLAUDE.md</code> and the <code>nevronflow-workflow</code> rule, reinforced by auto-memory.</p>
+    <h3 style="margin-top: 2.5rem;">The decision tree</h3>
+    <p style="color: var(--text-dim); font-size: 0.875rem; margin-bottom: 0;">Claude runs this decision tree on every user request. It's encoded in <code>CLAUDE.md</code> and the <code>nevronflow-workflow</code> rule, reinforced by auto-memory.</p>
 
     <div class="tree">
 <pre><span class="keyword">USER REQUEST</span>
@@ -972,8 +1021,8 @@
         (what changed, what to test, before vs after)</pre>
     </div>
 
-    <h3 style="margin-top: 40px;">Skills → agents wiring</h3>
-    <p style="color: var(--text-dim); font-size: 14px; margin-bottom: 0;">Every skill that delegates work shows which agents it spawns. Skills without agent delegations are either session-state helpers (<code>/nf:save</code>, <code>/nf:continue</code>) or direct command runners (<code>/nf:test</code>, <code>/nf:maestro</code>).</p>
+    <h3 style="margin-top: 2.5rem;">Skills → agents wiring</h3>
+    <p style="color: var(--text-dim); font-size: 0.875rem; margin-bottom: 0;">Every skill that delegates work shows which agents it spawns. Skills without agent delegations are either session-state helpers (<code>/nf:save</code>, <code>/nf:continue</code>) or direct command runners (<code>/nf:test</code>, <code>/nf:maestro</code>).</p>
 
     <div class="wiring-wrapper">
       <table class="wiring-table">
@@ -1352,7 +1401,7 @@
           </div>
         </div>
       </div>
-      <p style="color: var(--text-dim); font-size: 13px; margin-top: 16px; font-style: italic;">Exception: if the action requires physical access (MFA on phone, credit card for payment, secret not shared), Claude asks the user to do it manually. Otherwise: ui-operator drives.</p>
+      <p style="color: var(--text-dim); font-size: 0.8125rem; margin-top: 16px; font-style: italic;">Exception: if the action requires physical access (MFA on phone, credit card for payment, secret not shared), Claude asks the user to do it manually. Otherwise: ui-operator drives.</p>
     </div>
   </div>
 </section>
@@ -1360,7 +1409,7 @@
 <!-- RULES -->
 <section id="rules">
   <div class="container">
-    <h2>Rules <span style="color: var(--text-faint); font-size: 20px; font-weight: 500;">(16)</span></h2>
+    <h2>Rules <span style="color: var(--text-faint); font-size: 1.25rem; font-weight: 500;">(16)</span></h2>
     <p class="section-lead">Doctrine and style guides. Referenced by agents, Claude, and the team at decision time.</p>
 
     <div class="grid">
@@ -1387,7 +1436,7 @@
 <!-- AGENTS -->
 <section id="agents">
   <div class="container">
-    <h2>Agents <span style="color: var(--text-faint); font-size: 20px; font-weight: 500;">(20)</span></h2>
+    <h2>Agents <span style="color: var(--text-faint); font-size: 1.25rem; font-weight: 500;">(20)</span></h2>
     <p class="section-lead">Claude orchestrates; agents implement or analyze. Each has defined tools and a clear purpose.</p>
 
     <div class="subgroup">
@@ -1429,7 +1478,7 @@
 <!-- SKILLS -->
 <section id="skills">
   <div class="container">
-    <h2>Skills <span style="color: var(--text-faint); font-size: 20px; font-weight: 500;">(23)</span></h2>
+    <h2>Skills <span style="color: var(--text-faint); font-size: 1.25rem; font-weight: 500;">(23)</span></h2>
     <p class="section-lead">Mechanical procedures the user invokes with <code>/nf:&lt;name&gt;</code>. Each skill has a specific trigger and outcome.</p>
 
     <div class="subgroup"><h4>Planning and discovery</h4><p>Used at the start of any non-trivial change.</p></div>
@@ -1488,7 +1537,7 @@
 <!-- HOOKS -->
 <section id="hooks">
   <div class="container">
-    <h2>Hooks <span style="color: var(--text-faint); font-size: 20px; font-weight: 500;">(1)</span></h2>
+    <h2>Hooks <span style="color: var(--text-faint); font-size: 1.25rem; font-weight: 500;">(1)</span></h2>
     <p class="section-lead">Automatic enforcement at the tool-call level. Runs before Claude can execute certain actions.</p>
 
     <div class="grid">
@@ -1512,17 +1561,19 @@
   </div>
 </section>
 
+</main>
+
 <!-- FOOTER -->
 <footer>
   <div class="container">
     <p>NevronFlow Framework · Private · Internal Nevron engineering · Last updated 21. 4. 2026</p>
-    <p style="margin-top: 8px;"><a href="https://github.com/amadejdemsar-create/nevronflow-framework">Repository</a> · <a href="./INSTALL.md">Manual install</a> · <a href="./docs/ANALYTICS_CONTRIBUTION_GUIDE.md">Analytics contribution guide</a></p>
+    <p style="margin-top: 0.5rem;"><a href="https://github.com/amadejdemsar-create/nevronflow-framework">Repository</a> · <a href="./INSTALL.md">Manual install</a> · <a href="./docs/ANALYTICS_CONTRIBUTION_GUIDE.md">Analytics contribution guide</a></p>
   </div>
 </footer>
 
 <!-- TOAST -->
 <div class="toast" id="toast">
-  <div class="toast-icon" id="toast-icon">✓</div>
+  <div class="toast-icon" id="toast-icon"><i class="pi pi-check"></i></div>
   <div class="toast-content">
     <div class="toast-title" id="toast-title">Prompt copied</div>
     <div class="toast-desc" id="toast-desc">Paste into a new Claude Code session.</div>
@@ -1530,14 +1581,14 @@
 </div>
 
 <!-- INSTALL MODAL -->
-<div class="modal-overlay" id="installModal" onclick="if(event.target===this)hideInstallModal()">
+<div class="modal-overlay" id="installModal" role="dialog" aria-modal="true" onclick="if(event.target===this)hideInstallModal()">
   <div class="modal">
     <div class="modal-header">
       <h3>Install prompt</h3>
-      <button class="modal-close" onclick="hideInstallModal()">×</button>
+      <button class="modal-close" onclick="hideInstallModal()" aria-label="Close"><i class="pi pi-times"></i></button>
     </div>
     <div class="modal-body">
-      <p style="color: var(--text-dim); font-size: 14px; margin-bottom: 16px;">Copy this prompt and paste it into a fresh Claude Code session. Claude finds your nevron-core project (or asks), clones the framework repo, and installs it.</p>
+      <p style="color: var(--text-dim); font-size: 0.875rem; margin-bottom: 1rem;">Copy this prompt and paste it into a fresh Claude Code session. Claude finds your nevron-core project (or asks), clones the framework repo, and installs it.</p>
       <pre id="install-prompt-text"></pre>
     </div>
     <div class="modal-footer">
@@ -1548,14 +1599,14 @@
 </div>
 
 <!-- UPDATE MODAL -->
-<div class="modal-overlay" id="updateModal" onclick="if(event.target===this)hideUpdateModal()">
+<div class="modal-overlay" id="updateModal" role="dialog" aria-modal="true" onclick="if(event.target===this)hideUpdateModal()">
   <div class="modal">
     <div class="modal-header">
       <h3>Update prompt</h3>
-      <button class="modal-close" onclick="hideUpdateModal()">×</button>
+      <button class="modal-close" onclick="hideUpdateModal()" aria-label="Close"><i class="pi pi-times"></i></button>
     </div>
     <div class="modal-body">
-      <p style="color: var(--text-dim); font-size: 14px; margin-bottom: 16px;">Use this after the framework repo changes. Claude fetches the latest commit, diffs every rule, agent, skill, and hook against what you have installed in nevron-core/.claude/, backs up anything that differs, and re-syncs only the files that moved. BUSINESS_CONTEXT.md, COMPONENT_CATALOG.md, and any local customisations are left untouched.</p>
+      <p style="color: var(--text-dim); font-size: 0.875rem; margin-bottom: 1rem;">Use this after the framework repo changes. Claude fetches the latest commit, diffs every rule, agent, skill, and hook against what you have installed in nevron-core/.claude/, backs up anything that differs, and re-syncs only the files that moved. BUSINESS_CONTEXT.md, COMPONENT_CATALOG.md, and any local customisations are left untouched.</p>
       <pre id="update-prompt-text"></pre>
     </div>
     <div class="modal-footer">
@@ -1769,7 +1820,7 @@ function showToast(type, title, desc) {
   const d = document.getElementById('toast-desc');
 
   toast.className = 'toast show ' + type;
-  icon.textContent = type === 'success' ? '✓' : '✕';
+  icon.innerHTML = type === 'success' ? '<i class="pi pi-check"></i>' : '<i class="pi pi-times"></i>';
   t.textContent = title;
   d.textContent = desc;
 
