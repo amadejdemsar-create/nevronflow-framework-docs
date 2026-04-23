@@ -444,6 +444,8 @@
     line-height: 1.7;
     color: var(--text-dim);
     margin: var(--nevron-space-4) 0;
+    white-space: pre;         /* preserve newlines + indentation in ASCII tree */
+    overflow-x: auto;          /* scroll horizontally on narrow viewports */
   }
   .tree .new { color: var(--nevron-color-m5); }
   .tree .existing { color: var(--text); }
