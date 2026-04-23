@@ -1,0 +1,1301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NevronCore E2E Testing — Task Brief</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #0a0b0f;
+    --bg-card: #13151b;
+    --bg-elevated: #1a1d25;
+    --border: #23262f;
+    --border-strong: #2f333d;
+    --text: #e8eaf0;
+    --text-dim: #9aa0ae;
+    --text-faint: #5a5e6b;
+    --accent: #7c9cff;
+    --accent-hover: #93aeff;
+    --green: #58d18a;
+    --amber: #f0b95e;
+    --magenta: #d279e0;
+    --cyan: #5ec5d1;
+    --red: #e85a5a;
+    --shadow: 0 4px 24px rgba(0,0,0,0.4);
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+    line-height: 1.6;
+    font-size: 15px;
+  }
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(180deg, rgba(124,156,255,0.08) 0%, transparent 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 72px 0 56px;
+  }
+  .hero-inner { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+  .eyebrow {
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  h1 {
+    font-size: 46px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+  .hero p.lead {
+    font-size: 18px;
+    color: var(--text-dim);
+    max-width: 720px;
+    margin-bottom: 32px;
+  }
+
+  /* BIG COPY BUTTON */
+  .copy-card {
+    background: var(--bg-card);
+    border: 2px solid var(--accent);
+    border-radius: 14px;
+    padding: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-bottom: 40px;
+    box-shadow: 0 8px 32px rgba(124,156,255,0.15);
+  }
+  .copy-card .text {
+    flex: 1;
+    min-width: 280px;
+  }
+  .copy-card h3 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .copy-card p {
+    color: var(--text-dim);
+    font-size: 14px;
+    margin: 0;
+  }
+  .btn-copy {
+    background: var(--accent);
+    color: #0a0b0f;
+    border: none;
+    padding: 16px 32px;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+    font-family: inherit;
+  }
+  .btn-copy:hover {
+    background: var(--accent-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(124,156,255,0.35);
+  }
+  .btn-copy.success { background: var(--green); color: #0a0b0f; }
+  .btn-copy.error { background: var(--red); color: #fff; }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--text-dim);
+    border: 1px solid var(--border-strong);
+    padding: 14px 22px;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 8px;
+    cursor: pointer;
+    white-space: nowrap;
+    font-family: inherit;
+  }
+  .btn-secondary:hover {
+    color: var(--text);
+    border-color: var(--text-dim);
+  }
+
+  .hero-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 16px;
+  }
+  .stat {
+    padding: 18px 20px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+  .stat .num {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1;
+  }
+  .stat .label {
+    font-size: 12px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 8px;
+  }
+
+  /* NAV */
+  .nav {
+    background: rgba(10,11,15,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    padding: 14px 0;
+  }
+  .nav-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    gap: 24px;
+    overflow-x: auto;
+    scrollbar-width: thin;
+  }
+  .nav a {
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: color 0.15s;
+  }
+  .nav a:hover { color: var(--text); }
+
+  /* SECTIONS */
+  section { padding: 60px 0; border-bottom: 1px solid var(--border); }
+  section:last-child { border-bottom: none; }
+  h2 {
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin-bottom: 10px;
+  }
+  h2 .num {
+    color: var(--text-faint);
+    font-weight: 500;
+    margin-right: 8px;
+  }
+  h2 + p.section-lead {
+    color: var(--text-dim);
+    font-size: 16px;
+    max-width: 720px;
+    margin-bottom: 32px;
+  }
+  h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    margin-top: 28px;
+  }
+  h4 {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    margin-top: 20px;
+    color: var(--text);
+  }
+
+  /* STEP LIST */
+  .steps {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .step {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 22px;
+  }
+  .step-num {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-strong);
+    color: var(--text-dim);
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "SF Mono", Menlo, monospace;
+    margin-top: 2px;
+  }
+  .step-body {
+    flex: 1;
+  }
+  .step-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .step-detail {
+    color: var(--text-dim);
+    font-size: 14px;
+    line-height: 1.55;
+  }
+  .step-detail code {
+    font-family: "SF Mono", Menlo, monospace;
+    font-size: 12.5px;
+    background: var(--bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: var(--accent);
+  }
+  .step-detail a {
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px dashed rgba(124,156,255,0.4);
+  }
+  .step-detail a:hover { border-bottom-style: solid; }
+
+  /* CODE BLOCK */
+  .code {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-family: "SF Mono", Menlo, monospace;
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: var(--text-dim);
+    overflow-x: auto;
+    margin: 14px 0;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .code.highlight {
+    background: rgba(124,156,255,0.06);
+    border-color: rgba(124,156,255,0.3);
+    color: var(--text);
+  }
+
+  /* SURFACE GRID */
+  .surfaces {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 14px;
+    margin-top: 20px;
+  }
+  .surface-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    position: relative;
+  }
+  .surface-card.admin { border-top: 3px solid var(--accent); }
+  .surface-card.pwa   { border-top: 3px solid var(--green); }
+  .surface-card.tv    { border-top: 3px solid var(--amber); }
+  .surface-card .kind {
+    font-size: 11px;
+    color: var(--text-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .surface-card .name {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .surface-card .url {
+    font-family: "SF Mono", Menlo, monospace;
+    font-size: 12px;
+    color: var(--cyan);
+    margin-bottom: 12px;
+  }
+  .surface-card p {
+    font-size: 13.5px;
+    color: var(--text-dim);
+  }
+  .surface-card .status {
+    margin-top: 12px;
+    font-size: 12px;
+    color: var(--text-faint);
+  }
+  .surface-card .status strong { color: var(--text); }
+
+  /* FILE TREE */
+  .tree {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 24px;
+    font-family: "SF Mono", Menlo, monospace;
+    font-size: 12.5px;
+    line-height: 1.7;
+    color: var(--text-dim);
+    margin: 16px 0;
+  }
+  .tree .new { color: var(--magenta); }
+  .tree .existing { color: var(--text); }
+  .tree .comment { color: var(--text-faint); }
+
+  /* OPTIONS GRID */
+  .options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 14px;
+    margin-top: 16px;
+  }
+  .option {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+  }
+  .option .letter {
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 6px;
+  }
+  .option .title {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .option p {
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+  .option.recommended { border-color: rgba(88,209,138,0.4); }
+  .option.recommended .letter { color: var(--green); }
+
+  /* CALLOUT */
+  .callout {
+    background: rgba(240,185,94,0.08);
+    border: 1px solid rgba(240,185,94,0.3);
+    border-left: 4px solid var(--amber);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 20px 0;
+  }
+  .callout .tag {
+    color: var(--amber);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .callout p {
+    font-size: 14px;
+    color: var(--text);
+    margin: 0;
+  }
+  .callout.info {
+    background: rgba(124,156,255,0.08);
+    border-color: rgba(124,156,255,0.3);
+    border-left-color: var(--accent);
+  }
+  .callout.info .tag { color: var(--accent); }
+
+  /* TABLE */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 14px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    font-size: 13.5px;
+  }
+  th {
+    text-align: left;
+    padding: 12px 18px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-faint);
+    font-weight: 600;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-elevated);
+  }
+  td {
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-dim);
+  }
+  tr:last-child td { border-bottom: none; }
+  td code {
+    font-family: "SF Mono", Menlo, monospace;
+    font-size: 12px;
+    color: var(--accent);
+    background: rgba(124,156,255,0.08);
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+  td strong { color: var(--text); }
+  .new-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    background: rgba(210,121,224,0.15);
+    color: var(--magenta);
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+
+  /* RULES + TIPS GRID */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 24px;
+  }
+  @media (max-width: 720px) { .two-col { grid-template-columns: 1fr; } }
+  .col-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+  }
+  .col-card h4 { margin-top: 0; }
+  .col-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .col-card li {
+    font-size: 13px;
+    color: var(--text-dim);
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: start;
+    gap: 10px;
+  }
+  .col-card li:last-child { border-bottom: none; }
+  .col-card li code {
+    font-family: "SF Mono", Menlo, monospace;
+    font-size: 11.5px;
+    color: var(--text);
+    background: var(--bg);
+    padding: 1px 6px;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+  .col-card li .desc { flex: 1; }
+
+  /* FOOTER */
+  footer {
+    padding: 40px 0;
+    text-align: center;
+    color: var(--text-faint);
+    font-size: 13px;
+  }
+  footer a { color: var(--text-dim); text-decoration: none; }
+  footer a:hover { color: var(--text); }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-strong);
+    border-radius: 10px;
+    padding: 14px 20px;
+    box-shadow: var(--shadow);
+    display: none;
+    align-items: center;
+    gap: 10px;
+    z-index: 100;
+    max-width: 360px;
+  }
+  .toast.show { display: flex; }
+  .toast.success { border-color: var(--green); }
+  .toast.error { border-color: var(--red); }
+  .toast-icon { font-size: 18px; flex-shrink: 0; }
+  .toast-content { flex: 1; }
+  .toast-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+  .toast-desc {
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+
+  /* MODAL */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    padding: 20px;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal {
+    background: var(--bg-card);
+    border: 1px solid var(--border-strong);
+    border-radius: 12px;
+    max-width: 900px;
+    width: 100%;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow);
+  }
+  .modal-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .modal-header h3 {
+    font-size: 17px;
+    font-weight: 600;
+    margin: 0;
+  }
+  .modal-close {
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0 4px;
+  }
+  .modal-body {
+    padding: 24px;
+    overflow-y: auto;
+    flex: 1;
+  }
+  .modal pre {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    font-family: "SF Mono", Menlo, monospace;
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--text-dim);
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .modal-footer {
+    padding: 16px 24px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="eyebrow">E2E TASK BRIEF</div>
+    <h1>NevronCore End-to-End Testing</h1>
+    <p class="lead">Scaffolding is in place. Your job: refine the admin specs, then build PWA and TV coverage from scratch. You know our platform best — pick the right tenants, write the right tests.</p>
+
+    <div class="copy-card">
+      <div class="text">
+        <h3>Copy the full task into Claude Code</h3>
+        <p>One big prompt with every step. Paste into a Claude Code session inside your nevron-core checkout and work through it.</p>
+      </div>
+      <button class="btn-copy" id="copy-btn" onclick="copyPrompt()">Copy prompt</button>
+      <button class="btn-secondary" onclick="showModal()">Preview</button>
+    </div>
+
+    <div class="hero-stats">
+      <div class="stat"><div class="num">3</div><div class="label">Surfaces to test</div></div>
+      <div class="stat"><div class="num">3</div><div class="label">Starter specs already written</div></div>
+      <div class="stat"><div class="num">1</div><div class="label">Pull request to ship</div></div>
+      <div class="stat"><div class="num">You</div><div class="label">Know the platform best</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#install">1 · Install</a>
+    <a href="#playwright">2 · Playwright</a>
+    <a href="#task">3 · The Task</a>
+    <a href="#tenants">3.0 · Tenants</a>
+    <a href="#admin">3.1 · Admin</a>
+    <a href="#pwa">3.2 · PWA</a>
+    <a href="#tv">3.3 · TV</a>
+    <a href="#ship">4 · Ship</a>
+    <a href="#rules">Rules &amp; tips</a>
+  </div>
+</nav>
+
+<!-- INSTALL -->
+<section id="install">
+  <div class="container">
+    <h2><span class="num">1.</span>Install NevronFlow</h2>
+    <p class="section-lead">The framework lives in <code>.claude/</code> inside nevron-core. It brings agents, skills, rules, hooks, and the e2e/ scaffolding.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">Accept the GitHub collaborator invite</div>
+          <div class="step-detail">Open <a href="https://github.com/amadejdemsar-create/nevronflow-framework/invitations" target="_blank">github.com/amadejdemsar-create/nevronflow-framework/invitations</a> while logged in. Accept. If no invite is waiting, ping Amadej.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">Open the install page</div>
+          <div class="step-detail"><a href="https://amadejdemsar-create.github.io/nevronflow-framework-docs/" target="_blank">amadejdemsar-create.github.io/nevronflow-framework-docs/</a> — click "Install into nevron-core". The install prompt copies to your clipboard.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">Paste into a NEW Claude Code session</div>
+          <div class="step-detail">Not the session where you're reading this. A fresh one. Claude will find your nevron-core, back up any existing <code>.claude/</code>, install everything. When asked about CLAUDE.md drift, pick option A (back up + replace with the NevronFlow version).</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="step-title">Restart Claude Code</div>
+          <div class="step-detail">Confirm by running <code>/nf:plan</code> — it should start a 4-phase planning pipeline. Ctrl-C to exit once you've confirmed it loads.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PLAYWRIGHT -->
+<section id="playwright">
+  <div class="container">
+    <h2><span class="num">2.</span>Configure Playwright</h2>
+    <p class="section-lead">Two pieces: the Playwright MCP (lets Claude drive a browser while you work) and the npm project (actually runs the tests). Claude handles both if you give it one instruction.</p>
+
+    <h3>Paste into your Claude Code session</h3>
+    <div class="code highlight">Configure Playwright end-to-end for me, correctly and completely.
+
+1. Add the Playwright MCP server to my global ~/.claude.json (use jq, NEVER Read/Edit — that file is constantly being written). Standard config: stdio, command 'npx', args ['-y', '@playwright/mcp@latest']. If a 'playwright' entry already exists, skip.
+
+2. Tell me I need to restart Claude Code to pick up the new MCP server. Wait for me to confirm I restarted before continuing.
+
+3. In nevron-core/e2e/ (installed by the NevronFlow install prompt): run npm install, then npx playwright install chromium.
+
+4. Verify the stack is live: docker compose up -d in nevron-core if not already running, then curl http://localhost:4200 to confirm 200, then cd e2e &amp;&amp; npm test. The specs default to the 'demo' tenant — fine for smoke-testing the scaffold.
+
+5. Report: how many of the 3 starter admin specs passed / failed / skipped.
+   - If it's a SELECTOR issue (wrong element, timeout on something that should exist), fix it using codegen-inspired selectors.
+   - If it's a DATA/TENANT issue (empty state where data should be, zero KPIs, etc.), don't fix — flag it to me. I may need to switch the tenant or seed data first (see Section 3.0).
+
+6. Confirm the mcp__playwright__* tools are available in this session before declaring done.</div>
+
+    <div class="callout info">
+      <div class="tag">Heads up</div>
+      <p>Claude will ask you to restart Claude Code between MCP config and the npm install step. Just do it and come back.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TASK -->
+<section id="task">
+  <div class="container">
+    <h2><span class="num">3.</span>The Task — build full E2E coverage</h2>
+    <p class="section-lead">Three user-facing surfaces. Admin already has 3 starter specs to refine; PWA and TV are greenfield.</p>
+
+    <div class="surfaces">
+      <div class="surface-card admin">
+        <div class="kind">Surface 3.1</div>
+        <div class="name">Manager (admin panel)</div>
+        <div class="url">http://localhost:4200</div>
+        <p>Angular 19, PrimeNG. Hotel managers use this daily.</p>
+        <div class="status"><strong>Status:</strong> 3 starter specs exist. Refine + add.</div>
+      </div>
+      <div class="surface-card pwa">
+        <div class="kind">Surface 3.2</div>
+        <div class="name">PWA (guest app)</div>
+        <div class="url">http://localhost:8100</div>
+        <p>Ionic 8. Different auth (stay_id + email, guest-token).</p>
+        <div class="status"><strong>Status:</strong> empty, build from scratch.</div>
+      </div>
+      <div class="surface-card tv">
+        <div class="kind">Surface 3.3</div>
+        <div class="name">TV client</div>
+        <div class="url">http://localhost:8300</div>
+        <p>Vue 2, Tizen/LG/STB constraints. Keyboard nav only.</p>
+        <div class="status"><strong>Status:</strong> empty. Hardest surface.</div>
+      </div>
+    </div>
+
+    <h3>Current file structure</h3>
+    <div class="tree">e2e/
+├── package.json
+├── playwright.config.ts
+├── fixtures/
+│   └── <span class="existing">auth.ts</span>            <span class="comment">← loginAs() helper for admin</span>
+├── admin/
+│   ├── <span class="existing">login.spec.ts</span>      <span class="comment">← refine (selectors may need fixing)</span>
+│   ├── <span class="existing">analytics.spec.ts</span>
+│   └── <span class="existing">orders.spec.ts</span>
+├── <span class="new">pwa/</span>                   <span class="comment">← CREATE</span>
+└── <span class="new">tv/</span>                    <span class="comment">← CREATE</span></div>
+  </div>
+</section>
+
+<!-- TENANTS -->
+<section id="tenants">
+  <div class="container">
+    <h2><span class="num">3.0.</span>Decide which tenants to test against <span class="new-badge">do this first</span></h2>
+    <p class="section-lead">The starter specs default to the <code>demo</code> tenant. That's fine for smoke tests, but real E2E coverage needs tenants where the features actually have data and are enabled. You know which of our tenants have what — Claude doesn't.</p>
+
+    <h4>What each surface needs</h4>
+    <table>
+      <thead>
+        <tr><th>Surface</th><th>Required tenant state</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Admin</strong></td>
+          <td>Features enabled, seeded with real data: orders, QR scans, mood responses, conversations. Demo may be too thin.</td>
+        </tr>
+        <tr>
+          <td><strong>PWA</strong></td>
+          <td>Active stays with matching guest emails; catalogue, chat, room service feature flags ON.</td>
+        </tr>
+        <tr>
+          <td><strong>TV</strong></td>
+          <td>TV features enabled; a registered test device with a known device token for <code>/api/tv/init/</code>.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h4>Three ways to configure</h4>
+    <div class="options">
+      <div class="option">
+        <div class="letter">Option A</div>
+        <div class="title">One tenant for everything</div>
+        <p>Override via env vars when running tests:</p>
+        <div class="code">DEMO_TENANT_SLUG=your-tenant \
+DEMO_ADMIN_EMAIL=... \
+DEMO_ADMIN_PASSWORD=... \
+npm test</div>
+      </div>
+      <div class="option">
+        <div class="letter">Option B</div>
+        <div class="title">Different tenant per surface</div>
+        <p>Extend the CREDENTIALS object in <code>fixtures/auth.ts</code> (and create new fixtures for pwa/tv):</p>
+        <div class="code">export const CREDENTIALS = {
+  demoadmin:   { ..., tenant: 'demo' },
+  managerTest: { ..., tenant: 'x' },
+  guestTest:   { stayId, email, tenant: 'y' },
+  tvTest:      { deviceToken, tenant: 'z' },
+};</div>
+      </div>
+      <div class="option recommended">
+        <div class="letter">Option C · recommended long-term</div>
+        <div class="title">Purpose-built test tenant</div>
+        <p>Create a new tenant with everything seeded cleanly. Heavier upfront, but gives predictable data every run and isolates E2E from customer tenants.</p>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="tag">Don't skip this step</div>
+      <p>Whichever route you pick, document it in <code>e2e/README.md</code> under a "Test tenants" section — so anyone running the suite later knows which tenant each spec expects and how to reproduce the required state.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ADMIN -->
+<section id="admin">
+  <div class="container">
+    <h2><span class="num">3.1.</span>Refine admin/ specs</h2>
+    <p class="section-lead">The 3 existing specs were written without inspecting the live DOM. Selectors are conservative (<code>getByRole</code>, <code>getByLabel</code>) — they may or may not match reality. Run them against your admin tenant, fix what breaks.</p>
+
+    <h4>Existing specs</h4>
+    <table>
+      <thead><tr><th>File</th><th>Coverage</th></tr></thead>
+      <tbody>
+        <tr><td><code>admin/login.spec.ts</code></td><td>Login happy path + invalid credentials</td></tr>
+        <tr><td><code>admin/analytics.spec.ts</code></td><td>Analytics page renders + date range interaction (with skip fallback)</td></tr>
+        <tr><td><code>admin/orders.spec.ts</code></td><td>Orders page renders (table or empty state)</td></tr>
+      </tbody>
+    </table>
+
+    <h4>Recommended additions (pick what matters)</h4>
+    <table>
+      <thead><tr><th>File</th><th>Coverage</th></tr></thead>
+      <tbody>
+        <tr><td><code>admin/rooms.spec.ts</code></td><td>List rooms, open a detail, verify fields</td></tr>
+        <tr><td><code>admin/guests.spec.ts</code></td><td>List stays, check-in a stay, verify status change</td></tr>
+        <tr><td><code>admin/qr-codes.spec.ts</code></td><td>Create a QR code, scan stats appear</td></tr>
+        <tr><td><code>admin/ai-chat.spec.ts</code></td><td>Open an assistant, verify it responds</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout info">
+      <div class="tag">Tip</div>
+      <p>When a selector is brittle: <code>npm run codegen</code> opens Chromium at the login page. Click through the flow; Playwright records the right selectors. Copy into your spec.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PWA -->
+<section id="pwa">
+  <div class="container">
+    <h2><span class="num">3.2.</span>Build pwa/ from scratch</h2>
+    <p class="section-lead">PWA at <code>http://localhost:8100</code>. Different auth: guest logs in with stay_id + email. Token stored as <code>guest-token</code> in localStorage, 30-day validity, tied to a specific stay.</p>
+
+    <h4>Specs to create</h4>
+    <table>
+      <thead><tr><th>File</th><th>Coverage</th></tr></thead>
+      <tbody>
+        <tr><td><code>pwa/fixtures/guest-auth.ts</code></td><td><code>loginAsGuest(page, stayId, email)</code> helper</td></tr>
+        <tr><td><code>pwa/login.spec.ts</code></td><td>Fast check-in + guest app login</td></tr>
+        <tr><td><code>pwa/home.spec.ts</code></td><td>Home dashboard renders with module tiles</td></tr>
+        <tr><td><code>pwa/room-service.spec.ts</code></td><td>Browse catalogue → add to cart → place order</td></tr>
+        <tr><td><code>pwa/chat.spec.ts</code></td><td>Open chat, send message, receive AI reply</td></tr>
+      </tbody>
+    </table>
+
+    <h4>Add a pwa project to playwright.config.ts</h4>
+    <div class="code">projects: [
+  { name: 'admin-desktop', use: { ...devices['Desktop Chrome'], viewport: { width: 1440, height: 900 } }, testDir: './admin' },
+  { name: 'pwa-mobile',    use: { ...devices['iPhone 13'], baseURL: 'http://localhost:8100' },           testDir: './pwa' },
+]</div>
+
+    <p style="color: var(--text-dim); font-size: 13.5px; margin-top: 14px;">Run with: <code>npm test -- --project=pwa-mobile</code></p>
+
+    <div class="callout">
+      <div class="tag">Seeding</div>
+      <p>Guest login needs a real Stay in the chosen tenant with a matching email. Check for an existing seed command; if none exists, ping Amadej or write a small Django management command.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TV -->
+<section id="tv">
+  <div class="container">
+    <h2><span class="num">3.3.</span>Build tv/ from scratch <span class="new-badge">hardest</span></h2>
+    <p class="section-lead">TV client at <code>http://localhost:8300</code>. Vue 2, designed for Tizen/LG/STB browsers with memory limits. Remote-control keyboard navigation only — no mouse.</p>
+
+    <div class="callout">
+      <div class="tag">Read first</div>
+      <p>Read <code>.claude/rules/tv-style.md</code> before writing a single TV test. The constraints (no optional chaining in shipped code, minimal DOM nodes, slow CPUs) affect how your tests should assert and wait.</p>
+    </div>
+
+    <h4>Specs to create</h4>
+    <table>
+      <thead><tr><th>File</th><th>Coverage</th></tr></thead>
+      <tbody>
+        <tr><td><code>tv/fixtures/device-init.ts</code></td><td>Simulate TV boot: call <code>/api/tv/init/</code> with a test device token</td></tr>
+        <tr><td><code>tv/boot.spec.ts</code></td><td>/init/ returns dashboard; first focusable tile is highlighted</td></tr>
+        <tr><td><code>tv/navigation.spec.ts</code></td><td>Arrow keys move focus through tiles</td></tr>
+        <tr><td><code>tv/tv-channels.spec.ts</code></td><td>Open channels, select one, player loads</td></tr>
+        <tr><td><code>tv/movies.spec.ts</code></td><td>Open movies module, pick a movie, player loads</td></tr>
+      </tbody>
+    </table>
+
+    <h4>Add a tv project to playwright.config.ts</h4>
+    <div class="code">{ name: 'tv-hd', use: { viewport: { width: 1920, height: 1080 }, hasTouch: false, baseURL: 'http://localhost:8300' }, testDir: './tv' }</div>
+
+    <div class="callout info">
+      <div class="tag">Key pattern</div>
+      <p>Use <code>page.keyboard.press('ArrowDown')</code>, not mouse clicks. The TV has no cursor; simulating clicks gives you false positives. Generous timeouts and explicit waits for focus changes matter here more than on the admin or PWA.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SHIP -->
+<section id="ship">
+  <div class="container">
+    <h2><span class="num">4.</span>Ship it</h2>
+    <p class="section-lead">Your work lives in your local <code>nevron-core/e2e/</code>. The canonical version is in the NevronFlow framework repo. When ready, open a PR.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">Clone the framework repo</div>
+          <div class="step-detail"><code>git clone https://github.com/amadejdemsar-create/nevronflow-framework.git</code></div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">Copy your e2e/ edits into the cloned repo</div>
+          <div class="step-detail">Or work directly in the cloned repo from the start — your call.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">Create a branch, push it, open a Pull Request</div>
+          <div class="step-detail">Against <code>main</code>. Describe in the PR: which tenants you tested against, any seeding commands you wrote, any surface specifics worth knowing.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="step-title">Amadej reviews and merges</div>
+          <div class="step-detail">Once merged, all coworkers get your specs on next install-prompt run.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RULES + TIPS -->
+<section id="rules">
+  <div class="container">
+    <h2>Rules to read &amp; tips</h2>
+    <p class="section-lead">After install, these rules live in your local <code>&lt;nevron-core&gt;/.claude/rules/</code>. Read in this order.</p>
+
+    <div class="two-col">
+      <div class="col-card">
+        <h4>Rule files</h4>
+        <ul>
+          <li><code>testing.md</code><span class="desc">test patterns, tenant-safety</span></li>
+          <li><code>nevronflow-workflow.md</code><span class="desc">Clarify → Plan → Implement → Verify → Explain</span></li>
+          <li><code>multi-tenant.md</code><span class="desc">isolation rules, applies to test data</span></li>
+          <li><code>frontend-style.md</code><span class="desc">admin conventions (Angular 19, PrimeNG)</span></li>
+          <li><code>pwa-style.md</code><span class="desc">PWA conventions (Ionic, guest auth)</span></li>
+          <li><code>tv-style.md</code><span class="desc">TV constraints</span></li>
+          <li><code>ai-chat-context.md</code><span class="desc">widget vs PWA chat (if you test chat)</span></li>
+        </ul>
+      </div>
+      <div class="col-card">
+        <h4>Playwright tips</h4>
+        <ul>
+          <li><code>npm run report</code><span class="desc">screenshots + video + trace before debugging anything</span></li>
+          <li><code>show-trace</code><span class="desc">replays a failed run step by step</span></li>
+          <li><code>npm run codegen</code><span class="desc">when a selector is brittle, let Playwright record the right one</span></li>
+          <li><code>20 &gt; 50</code><span class="desc">20 reliable tests beat 50 flaky ones. Flakes destroy trust faster than gaps.</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <p>NevronFlow E2E Task Brief · 23. 4. 2026</p>
+    <p style="margin-top: 8px;">
+      <a href="./index.html">NevronFlow Framework</a> ·
+      <a href="https://github.com/amadejdemsar-create/nevronflow-framework" target="_blank">Framework repo</a> ·
+      <a href="https://playwright.dev/docs/intro" target="_blank">Playwright docs</a>
+    </p>
+  </div>
+</footer>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <div class="toast-icon" id="toast-icon">✓</div>
+  <div class="toast-content">
+    <div class="toast-title" id="toast-title">Copied</div>
+    <div class="toast-desc" id="toast-desc">Paste into a Claude Code session.</div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal" onclick="if(event.target===this)hideModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Full task prompt</h3>
+      <button class="modal-close" onclick="hideModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <p style="color: var(--text-dim); font-size: 14px; margin-bottom: 16px;">This is what gets copied. Paste it into a Claude Code session inside your nevron-core checkout.</p>
+      <pre id="prompt-text"></pre>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="hideModal()">Close</button>
+      <button class="btn-copy" onclick="copyPrompt(); hideModal();">Copy to clipboard</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const TASK_PROMPT = `I'm adding end-to-end browser tests to NevronCore. The scaffolding lives in a shared Claude Code framework called NevronFlow. Amadej already wrote 3 starter admin-panel specs; your task is to refine them, then add PWA + TV coverage. You know our platform best, so use your judgment on what to test — the structure below is guidance, not a cage.
+
+═══════════════════════════════════════════════════════════
+SECTION 1: INSTALL NEVRONFLOW
+═══════════════════════════════════════════════════════════
+
+1. Accept the GitHub collaborator invite at https://github.com/amadejdemsar-create/nevronflow-framework/invitations (ask Amadej for an invite if missing).
+
+2. Open https://amadejdemsar-create.github.io/nevronflow-framework-docs/ and click "Install into nevron-core". The install prompt copies to your clipboard.
+
+3. Paste into a NEW Claude Code session (not this one). Claude walks you through: find your nevron-core, back up existing .claude/, install agents + skills + rules + hooks + settings.json + docs + e2e/. When asked about CLAUDE.md drift, pick option A (back up + replace with the NevronFlow version).
+
+4. Restart Claude Code. Confirm by running /nf:plan — it should start a planning pipeline.
+
+═══════════════════════════════════════════════════════════
+SECTION 2: CONFIGURE PLAYWRIGHT (let Claude handle it)
+═══════════════════════════════════════════════════════════
+
+In your Claude Code session inside nevron-core, paste this:
+
+    "Configure Playwright end-to-end for me, correctly and completely.
+
+    1. Add the Playwright MCP server to my global ~/.claude.json (use jq, NEVER Read/Edit — that file is constantly being written). Standard config: stdio, command 'npx', args ['-y', '@playwright/mcp@latest']. If a 'playwright' entry already exists, skip.
+
+    2. Tell me I need to restart Claude Code to pick up the new MCP server. Wait for me to confirm I restarted before continuing.
+
+    3. In nevron-core/e2e/ (installed by the NevronFlow install prompt): run npm install, then npx playwright install chromium.
+
+    4. Verify the stack is live: docker compose up -d in nevron-core if not already running, then curl http://localhost:4200 to confirm 200, then cd e2e && npm test. The specs default to the 'demo' tenant — fine for smoke-testing the scaffold.
+
+    5. Report: how many of the 3 starter admin specs passed / failed / skipped.
+       - If it's a SELECTOR issue (wrong element, timeout on something that should exist), fix it using codegen-inspired selectors.
+       - If it's a DATA/TENANT issue (empty state where data should be, zero KPIs, etc.), don't fix — flag it to me. I may need to switch the tenant or seed data first (see Section 3 step 3.0).
+
+    6. Confirm the mcp__playwright__* tools are available in this session before declaring done."
+
+Claude will do all of it. If it asks you a clarifying question, answer it; otherwise just watch.
+
+═══════════════════════════════════════════════════════════
+SECTION 3: THE TASK — build full E2E coverage
+═══════════════════════════════════════════════════════════
+
+Three user-facing surfaces:
+  - manager (admin panel at http://localhost:4200)
+  - pwa (guest app at http://localhost:8100)
+  - tv (TV client at http://localhost:8300)
+
+Current structure:
+
+  e2e/
+  ├── package.json
+  ├── playwright.config.ts
+  ├── fixtures/
+  │   └── auth.ts            loginAs() helper for the admin panel
+  ├── admin/                 3 starter specs (refine)
+  ├── pwa/                   create
+  └── tv/                    create
+
+═══ Step 3.0 — Decide which tenant(s) to test against FIRST ═══
+
+The starter specs default to the 'demo' tenant (see fixtures/auth.ts). That's fine for smoke-testing, but real E2E coverage needs tenants where:
+  - Admin: features are enabled and seeded with real data (orders, QR scans, mood responses, conversations)
+  - PWA: stays exist with matching guest emails; catalogue, chat, room service are enabled
+  - TV: TV features enabled; a registered test device with a known device token
+
+Pick the right tenant for each surface BEFORE writing specs. You know which of our tenants have what — Claude does not.
+
+Options:
+
+  (a) One tenant for everything. Override via env vars:
+        DEMO_TENANT_SLUG=your-tenant  DEMO_ADMIN_EMAIL=...  DEMO_ADMIN_PASSWORD=...
+      Run with: DEMO_TENANT_SLUG=... npm test
+
+  (b) Different tenant per surface. Extend the CREDENTIALS object in fixtures/auth.ts (and create new fixtures for pwa/tv):
+        export const CREDENTIALS = {
+          demoadmin:   { email, password, tenant: 'demo' },
+          managerTest: { email, password, tenant: 'some-real-tenant' },
+          guestTest:   { stayId, email,   tenant: '...' },          // in pwa/fixtures/guest-auth.ts
+          tvTest:      { deviceToken,      tenant: '...' },          // in tv/fixtures/device-init.ts
+        };
+      Tests import the credential set they need: loginAs(page, 'managerTest').
+
+  (c) Create a new purpose-built test tenant with everything seeded cleanly. Heavier upfront, but gives predictable data every run and isolates E2E from customer tenants. Ideal long-term.
+
+Whichever route you pick, document it in e2e/README.md under a "Test tenants" section so anyone running the suite later knows which tenant each spec expects and how to reproduce the required state.
+
+═══ Step 3.1 — Refine admin/ specs ═══
+
+Run the 3 existing specs first with your chosen admin tenant. Fix selectors that don't match reality. You know the PrimeNG conventions used in our admin better than anyone.
+
+Recommended additions (your call which subset to ship):
+  - admin/rooms.spec.ts         list rooms, open detail, verify fields
+  - admin/guests.spec.ts        list stays, check-in, verify status
+  - admin/qr-codes.spec.ts      create a QR code, scan stats render
+  - admin/ai-chat.spec.ts       open an assistant, verify it responds
+
+═══ Step 3.2 — Build pwa/ from scratch ═══
+
+PWA at http://localhost:8100. Different auth model: guest logs in with stay_id + email (see pwa/src/app/...authentication.service.ts for the real shape). Token stored as "guest-token" in localStorage, 30-day validity, tied to a specific stay.
+
+Use the tenant you chose in Step 3.0 for PWA. Make sure it has active stays with test guest emails seeded.
+
+Create:
+  pwa/fixtures/guest-auth.ts   loginAsGuest(page, stayId, email) helper
+  pwa/login.spec.ts            fast check-in + guest app login
+  pwa/home.spec.ts             home dashboard renders with module tiles
+  pwa/room-service.spec.ts     browse catalogue → add to cart → place order
+  pwa/chat.spec.ts             open chat, send message, receive AI reply
+
+Seeding: guest login needs a real Stay in the chosen tenant with a matching email. Check if there's an existing seed command; if not, ask Amadej or write a small management command.
+
+Add a pwa project in playwright.config.ts (mobile viewport, different baseURL):
+
+  projects: [
+    { name: 'admin-desktop', use: { ...devices['Desktop Chrome'], viewport: { width: 1440, height: 900 } }, testDir: './admin' },
+    { name: 'pwa-mobile',    use: { ...devices['iPhone 13'], baseURL: 'http://localhost:8100' },           testDir: './pwa' },
+  ]
+
+Run with: npm test -- --project=pwa-mobile
+
+═══ Step 3.3 — Build tv/ from scratch (hardest) ═══
+
+TV client at http://localhost:8300. Vue 2, designed for Tizen/LG/STB browsers with memory limits. Remote-control keyboard navigation only (D-pad arrow keys + Enter/Back), no mouse.
+
+Read .claude/rules/tv-style.md FIRST. The TV has constraints (no optional chaining in shipped code, minimal DOM, slow CPUs) that affect test timing and assertions.
+
+Use the tenant you chose in Step 3.0 for TV. It needs TV features enabled and a registered test device with a known device token.
+
+Create:
+  tv/fixtures/device-init.ts   simulate TV boot: call /api/tv/init/ with a test device token, receive the full dashboard response
+  tv/boot.spec.ts              /init/ returns dashboard; first focusable tile is highlighted
+  tv/navigation.spec.ts        arrow keys move focus through tiles
+  tv/tv-channels.spec.ts       open channels, select one, player loads
+  tv/movies.spec.ts            open movies module, pick a movie, player loads
+
+Key: use page.keyboard.press('ArrowDown') etc. Mouse clicks don't reflect how TVs actually operate. Generous timeouts. Explicit waits for focus changes.
+
+Add a tv project in playwright.config.ts:
+
+  { name: 'tv-hd', use: { viewport: { width: 1920, height: 1080 }, hasTouch: false, baseURL: 'http://localhost:8300' }, testDir: './tv' }
+
+═══ Step 3.4 — Update e2e/README.md ═══
+
+Add sections explaining:
+  - The three surfaces, how to run each
+  - "Test tenants" — which tenant each spec expects and why; how to reproduce the required state (seeds, feature flags, registered devices)
+  - Any surface-specific gotchas (guest seeding for PWA, keyboard nav for TV)
+
+═══════════════════════════════════════════════════════════
+SECTION 4: SHIP IT
+═══════════════════════════════════════════════════════════
+
+When you're happy with the tests:
+
+  1. Clone the framework repo: git clone https://github.com/amadejdemsar-create/nevronflow-framework.git
+  2. Copy your e2e/ edits over (or work directly in the cloned repo from the start if you prefer)
+  3. Create a branch, push it, open a Pull Request against main
+  4. Amadej reviews and merges
+
+═══════════════════════════════════════════════════════════
+RULES TO READ BEFORE STARTING
+═══════════════════════════════════════════════════════════
+
+After install, these live in <nevron-core>/.claude/rules/:
+
+  testing.md                test patterns, tenant-safety
+  nevronflow-workflow.md    Clarify → Plan → Implement → Verify → Explain
+  multi-tenant.md           isolation rules, applies to test data
+  frontend-style.md         admin conventions (Angular 19, PrimeNG)
+  pwa-style.md              PWA conventions (Ionic, guest auth)
+  tv-style.md               TV constraints
+  ai-chat-context.md        widget vs PWA chat (if you test chat)
+
+═══════════════════════════════════════════════════════════
+TIPS
+═══════════════════════════════════════════════════════════
+
+- npm run report before debugging anything — screenshots + video + trace
+- npx playwright show-trace test-results/<run>/trace.zip replays step by step
+- npm run codegen when a selector is brittle
+- Keep first specs small. 20 reliable tests > 50 flaky ones. Flakes destroy trust faster than gaps.
+
+Questions? Ask Amadej in the group chat.`;
+
+function showToast(type, title, desc) {
+  const toast = document.getElementById('toast');
+  const icon = document.getElementById('toast-icon');
+  const t = document.getElementById('toast-title');
+  const d = document.getElementById('toast-desc');
+  toast.className = 'toast show ' + type;
+  icon.textContent = type === 'success' ? '✓' : '✕';
+  t.textContent = title;
+  d.textContent = desc;
+  setTimeout(() => toast.classList.remove('show'), 3500);
+}
+
+async function copyPrompt() {
+  const btn = document.getElementById('copy-btn');
+  const original = btn.textContent;
+  try {
+    await navigator.clipboard.writeText(TASK_PROMPT);
+    btn.textContent = 'Copied ✓';
+    btn.classList.add('success');
+    showToast('success', 'Task prompt copied', 'Paste into a Claude Code session in your nevron-core checkout.');
+    setTimeout(() => {
+      btn.textContent = original;
+      btn.classList.remove('success');
+    }, 2500);
+  } catch (err) {
+    const ta = document.createElement('textarea');
+    ta.value = TASK_PROMPT;
+    document.body.appendChild(ta);
+    ta.select();
+    try {
+      document.execCommand('copy');
+      btn.textContent = 'Copied ✓';
+      btn.classList.add('success');
+      showToast('success', 'Task prompt copied', 'Paste into a Claude Code session.');
+    } catch {
+      btn.textContent = 'Copy failed';
+      btn.classList.add('error');
+      showToast('error', 'Could not copy', 'Click Preview and copy manually.');
+    }
+    document.body.removeChild(ta);
+    setTimeout(() => {
+      btn.textContent = original;
+      btn.classList.remove('success', 'error');
+    }, 2500);
+  }
+}
+
+function showModal() {
+  document.getElementById('prompt-text').textContent = TASK_PROMPT;
+  document.getElementById('modal').classList.add('show');
+}
+function hideModal() {
+  document.getElementById('modal').classList.remove('show');
+}
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') hideModal(); });
+</script>
+
+</body>
+</html>
