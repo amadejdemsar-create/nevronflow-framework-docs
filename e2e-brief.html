@@ -4,125 +4,212 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>NevronCore E2E Testing — Task Brief</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   :root {
-    --bg: #0a0b0f;
-    --bg-card: #13151b;
-    --bg-elevated: #1a1d25;
-    --border: #23262f;
-    --border-strong: #2f333d;
-    --text: #e8eaf0;
-    --text-dim: #9aa0ae;
-    --text-faint: #5a5e6b;
-    --accent: #7c9cff;
-    --accent-hover: #93aeff;
-    --green: #58d18a;
-    --amber: #f0b95e;
-    --magenta: #d279e0;
-    --cyan: #5ec5d1;
-    --red: #e85a5a;
-    --shadow: 0 4px 24px rgba(0,0,0,0.4);
+    /* Nevron Design Tokens — Primary Blues */
+    --nevron-color-m1: #000126;
+    --nevron-color-m2: #00317A;
+    --nevron-color-m3: #0067B2;
+    --nevron-color-m4: #009CDE;
+    --nevron-color-m5: #7BCAED;
+    --nevron-color-m6: #E1F4FF;
+
+    /* Nevron Design Tokens — Secondary Grays */
+    --nevron-color-s1: #080C13;
+    --nevron-color-s2: #2C3038;
+    --nevron-color-s3: #6B7077;
+    --nevron-color-s4: #A4A7AB;
+    --nevron-color-s5: #D3D5D6;
+    --nevron-color-s6: #EFF0F0;
+
+    /* Nevron Design Tokens — Supporting */
+    --nevron-color-red: #DA2025;
+    --nevron-color-orange: #E56600;
+    --nevron-color-yellow: #F6A900;
+    --nevron-color-green: #36A058;
+
+    /* Nevron Design Tokens — Neutrals */
+    --nevron-color-black: #000000;
+    --nevron-color-white: #FFFFFF;
+
+    /* Nevron Design Tokens — Typography */
+    --nevron-font-family: 'Neue Haas Unica', 'Inter', 'Helvetica Neue', Arial, sans-serif;
+    --nevron-font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+    /* Nevron Design Tokens — Spacing */
+    --nevron-space-1: 0.25rem;
+    --nevron-space-2: 0.5rem;
+    --nevron-space-3: 0.75rem;
+    --nevron-space-4: 1rem;
+    --nevron-space-5: 1.25rem;
+    --nevron-space-6: 1.5rem;
+    --nevron-space-8: 2rem;
+    --nevron-space-10: 2.5rem;
+    --nevron-space-12: 3rem;
+    --nevron-space-16: 4rem;
+
+    /* Nevron Design Tokens — Radius */
+    --nevron-radius-sm: 0.25rem;
+    --nevron-radius-md: 0.5rem;
+    --nevron-radius-lg: 0.75rem;
+    --nevron-radius-xl: 1rem;
+
+    /* Nevron Design Tokens — Shadows */
+    --nevron-shadow-sm: 0 1px 2px rgba(0, 1, 38, 0.05);
+    --nevron-shadow-md: 0 4px 6px -1px rgba(0, 1, 38, 0.07), 0 2px 4px -2px rgba(0, 1, 38, 0.05);
+    --nevron-shadow-lg: 0 10px 15px -3px rgba(0, 1, 38, 0.08), 0 4px 6px -4px rgba(0, 1, 38, 0.05);
+
+    /* Nevron Design Tokens — Transitions */
+    --nevron-transition-fast: 150ms ease;
+    --nevron-transition-base: 250ms ease;
+
+    /* Nevron Design Tokens — Z-index */
+    --nevron-z-sticky: 200;
+    --nevron-z-modal: 400;
+    --nevron-z-toast: 500;
+
+    /* Dark-theme surface aliases (derived from Nevron blue scale) */
+    --n-bg: var(--nevron-color-m1);
+    --n-panel: color-mix(in srgb, var(--nevron-color-m2) 12%, var(--nevron-color-m1));
+    --n-panel-strong: color-mix(in srgb, var(--nevron-color-m2) 22%, var(--nevron-color-m1));
+    --n-panel-hover: color-mix(in srgb, var(--nevron-color-m2) 30%, var(--nevron-color-m1));
+    --n-border: rgba(0, 103, 178, 0.14);
+    --n-border-strong: rgba(0, 103, 178, 0.28);
+
+    /* Local aliases (map original variable names to Nevron tokens) */
+    --bg: var(--n-bg);
+    --bg-card: var(--n-panel);
+    --bg-elevated: var(--n-panel-strong);
+    --border: var(--n-border);
+    --border-strong: var(--n-border-strong);
+    --text: var(--nevron-color-white);
+    --text-dim: #B4B6B9;
+    --text-faint: #707379;
+    --accent: var(--nevron-color-m3);
+    --accent-hover: var(--nevron-color-m4);
+    --green: var(--nevron-color-green);
+    --amber: var(--nevron-color-yellow);
+    --magenta: var(--nevron-color-m5);
+    --cyan: var(--nevron-color-m4);
+    --red: var(--nevron-color-red);
+    --shadow: 0 4px 24px rgba(0, 1, 38, 0.5);
   }
   html { scroll-behavior: smooth; }
   body {
     background: var(--bg);
     color: var(--text);
-    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+    font-family: var(--nevron-font-family);
     line-height: 1.6;
-    font-size: 15px;
+    font-size: 1rem;
   }
-  .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 var(--nevron-space-6); }
 
   /* HERO */
   .hero {
-    background: linear-gradient(180deg, rgba(124,156,255,0.08) 0%, transparent 100%);
+    background: radial-gradient(ellipse at top, color-mix(in srgb, var(--nevron-color-m3) 10%, var(--nevron-color-m1)), var(--nevron-color-m1) 70%);
     border-bottom: 1px solid var(--border);
-    padding: 72px 0 56px;
+    padding: 4.5rem 0 3.5rem;
   }
-  .hero-inner { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+  .hero-inner { max-width: 1100px; margin: 0 auto; padding: 0 var(--nevron-space-6); }
+  .hero-brand {
+    display: flex;
+    align-items: center;
+    gap: var(--nevron-space-4);
+    margin-bottom: var(--nevron-space-8);
+  }
+  .hero-brand img {
+    height: 28px;
+    width: auto;
+    opacity: 0.7;
+  }
   .eyebrow {
-    color: var(--accent);
-    font-size: 13px;
+    color: var(--nevron-color-m4);
+    font-size: 0.8125rem;
     font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    margin-bottom: 16px;
+    margin-bottom: var(--nevron-space-4);
   }
   h1 {
-    font-size: 46px;
+    font-size: 2.75rem;
     font-weight: 700;
     letter-spacing: -0.02em;
     line-height: 1.1;
-    margin-bottom: 16px;
+    margin-bottom: var(--nevron-space-4);
   }
   .hero p.lead {
-    font-size: 18px;
+    font-size: 1.125rem;
     color: var(--text-dim);
     max-width: 720px;
-    margin-bottom: 32px;
+    margin-bottom: var(--nevron-space-8);
+    line-height: 1.6;
   }
 
   /* BIG COPY BUTTON */
   .copy-card {
     background: var(--bg-card);
-    border: 2px solid var(--accent);
-    border-radius: 14px;
-    padding: 28px;
+    border: 2px solid var(--nevron-color-m3);
+    border-radius: var(--nevron-radius-xl);
+    padding: var(--nevron-space-6) var(--nevron-space-8);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 24px;
+    gap: var(--nevron-space-6);
     flex-wrap: wrap;
-    margin-bottom: 40px;
-    box-shadow: 0 8px 32px rgba(124,156,255,0.15);
+    margin-bottom: var(--nevron-space-10);
+    box-shadow: 0 8px 32px rgba(0, 103, 178, 0.15);
   }
   .copy-card .text {
     flex: 1;
     min-width: 280px;
   }
   .copy-card h3 {
-    font-size: 20px;
+    font-size: 1.25rem;
     font-weight: 600;
-    margin-bottom: 4px;
+    margin-bottom: var(--nevron-space-1);
   }
   .copy-card p {
     color: var(--text-dim);
-    font-size: 14px;
+    font-size: 0.875rem;
     margin: 0;
   }
   .btn-copy {
-    background: var(--accent);
-    color: #0a0b0f;
+    background: var(--nevron-color-m3);
+    color: var(--nevron-color-white);
     border: none;
-    padding: 16px 32px;
-    font-size: 15px;
+    padding: 0.75rem 2rem;
+    font-size: 0.9375rem;
     font-weight: 600;
-    border-radius: 8px;
+    border-radius: var(--nevron-radius-md);
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: all var(--nevron-transition-fast);
     white-space: nowrap;
-    font-family: inherit;
+    font-family: var(--nevron-font-family);
+    min-height: 44px;
   }
   .btn-copy:hover {
-    background: var(--accent-hover);
+    background: var(--nevron-color-m4);
     transform: translateY(-1px);
-    box-shadow: 0 6px 20px rgba(124,156,255,0.35);
+    box-shadow: 0 6px 20px rgba(0, 103, 178, 0.35);
   }
-  .btn-copy.success { background: var(--green); color: #0a0b0f; }
-  .btn-copy.error { background: var(--red); color: #fff; }
+  .btn-copy.success { background: var(--nevron-color-green); color: var(--nevron-color-white); }
+  .btn-copy.error { background: var(--nevron-color-red); color: var(--nevron-color-white); }
 
   .btn-secondary {
     background: transparent;
     color: var(--text-dim);
     border: 1px solid var(--border-strong);
-    padding: 14px 22px;
-    font-size: 14px;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.875rem;
     font-weight: 500;
-    border-radius: 8px;
+    border-radius: var(--nevron-radius-md);
     cursor: pointer;
     white-space: nowrap;
-    font-family: inherit;
+    font-family: var(--nevron-font-family);
+    min-height: 44px;
+    transition: all var(--nevron-transition-fast);
   }
   .btn-secondary:hover {
     color: var(--text);
@@ -132,88 +219,89 @@
   .hero-stats {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 16px;
+    gap: var(--nevron-space-4);
   }
   .stat {
-    padding: 18px 20px;
+    padding: 1.125rem 1.25rem;
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 10px;
+    border-radius: var(--nevron-radius-lg);
   }
   .stat .num {
-    font-size: 28px;
+    font-size: 1.75rem;
     font-weight: 700;
     color: var(--text);
     line-height: 1;
   }
   .stat .label {
-    font-size: 12px;
+    font-size: 0.75rem;
     color: var(--text-dim);
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    margin-top: 8px;
+    margin-top: var(--nevron-space-2);
   }
 
   /* NAV */
   .nav {
-    background: rgba(10,11,15,0.85);
+    background: rgba(0, 1, 38, 0.85);
     backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--border);
     position: sticky;
     top: 0;
-    z-index: 10;
-    padding: 14px 0;
+    z-index: var(--nevron-z-sticky);
+    padding: 0.875rem 0;
   }
   .nav-inner {
     max-width: 1100px;
     margin: 0 auto;
-    padding: 0 24px;
+    padding: 0 var(--nevron-space-6);
     display: flex;
-    gap: 24px;
+    gap: var(--nevron-space-6);
     overflow-x: auto;
     scrollbar-width: thin;
   }
   .nav a {
     color: var(--text-dim);
     text-decoration: none;
-    font-size: 14px;
+    font-size: 0.875rem;
     font-weight: 500;
     white-space: nowrap;
-    transition: color 0.15s;
+    transition: color var(--nevron-transition-fast);
   }
-  .nav a:hover { color: var(--text); }
+  .nav a:hover { color: var(--nevron-color-m4); }
 
   /* SECTIONS */
-  section { padding: 60px 0; border-bottom: 1px solid var(--border); }
+  section { padding: var(--nevron-space-16) 0; border-bottom: 1px solid var(--border); }
   section:last-child { border-bottom: none; }
   h2 {
-    font-size: 30px;
+    font-size: 1.75rem;
     font-weight: 700;
     letter-spacing: -0.01em;
-    margin-bottom: 10px;
+    margin-bottom: 0.625rem;
   }
   h2 .num {
     color: var(--text-faint);
     font-weight: 500;
-    margin-right: 8px;
+    margin-right: var(--nevron-space-2);
   }
   h2 + p.section-lead {
     color: var(--text-dim);
-    font-size: 16px;
+    font-size: 1rem;
     max-width: 720px;
-    margin-bottom: 32px;
+    margin-bottom: var(--nevron-space-8);
+    line-height: 1.6;
   }
   h3 {
-    font-size: 18px;
+    font-size: 1.125rem;
     font-weight: 600;
-    margin-bottom: 12px;
-    margin-top: 28px;
+    margin-bottom: var(--nevron-space-3);
+    margin-top: var(--nevron-space-8);
   }
   h4 {
-    font-size: 15px;
+    font-size: 0.9375rem;
     font-weight: 600;
-    margin-bottom: 8px;
-    margin-top: 20px;
+    margin-bottom: var(--nevron-space-2);
+    margin-top: var(--nevron-space-5);
     color: var(--text);
   }
 
@@ -221,79 +309,80 @@
   .steps {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: var(--nevron-space-4);
   }
   .step {
     display: flex;
-    gap: 20px;
+    gap: var(--nevron-space-5);
     align-items: flex-start;
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 18px 22px;
+    border-radius: var(--nevron-radius-lg);
+    padding: 1.125rem 1.375rem;
   }
   .step-num {
     flex-shrink: 0;
-    width: 32px;
-    height: 32px;
+    width: 2rem;
+    height: 2rem;
     border-radius: 50%;
-    background: var(--bg-elevated);
-    border: 1px solid var(--border-strong);
-    color: var(--text-dim);
-    font-size: 13px;
+    background: color-mix(in srgb, var(--nevron-color-m3) 15%, var(--nevron-color-m1));
+    border: 1px solid rgba(0, 103, 178, 0.3);
+    color: var(--nevron-color-m4);
+    font-size: 0.8125rem;
     font-weight: 600;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: "SF Mono", Menlo, monospace;
+    font-family: var(--nevron-font-mono), monospace;
     margin-top: 2px;
   }
   .step-body {
     flex: 1;
   }
   .step-title {
-    font-size: 16px;
+    font-size: 1rem;
     font-weight: 600;
-    margin-bottom: 4px;
+    margin-bottom: var(--nevron-space-1);
   }
   .step-detail {
     color: var(--text-dim);
-    font-size: 14px;
+    font-size: 0.875rem;
     line-height: 1.55;
   }
   .step-detail code {
-    font-family: "SF Mono", Menlo, monospace;
-    font-size: 12.5px;
-    background: var(--bg);
-    padding: 2px 6px;
-    border-radius: 4px;
-    color: var(--accent);
+    font-family: var(--nevron-font-mono), monospace;
+    font-size: 0.8125rem;
+    background: color-mix(in srgb, var(--nevron-color-m3) 8%, var(--nevron-color-m1));
+    padding: 0.125rem 0.375rem;
+    border-radius: var(--nevron-radius-sm);
+    color: var(--nevron-color-m4);
   }
   .step-detail a {
-    color: var(--accent);
+    color: var(--nevron-color-m4);
     text-decoration: none;
-    border-bottom: 1px dashed rgba(124,156,255,0.4);
+    border-bottom: 1px dashed rgba(0, 156, 222, 0.4);
+    transition: border-color var(--nevron-transition-fast);
   }
   .step-detail a:hover { border-bottom-style: solid; }
 
   /* CODE BLOCK */
   .code {
-    background: var(--bg);
+    background: color-mix(in srgb, var(--nevron-color-m2) 6%, var(--nevron-color-m1));
     border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 14px 16px;
-    font-family: "SF Mono", Menlo, monospace;
-    font-size: 12.5px;
+    border-radius: var(--nevron-radius-md);
+    padding: 0.875rem 1rem;
+    font-family: var(--nevron-font-mono), monospace;
+    font-size: 0.8125rem;
     line-height: 1.6;
     color: var(--text-dim);
     overflow-x: auto;
-    margin: 14px 0;
+    margin: 0.875rem 0;
     white-space: pre-wrap;
     word-break: break-word;
   }
   .code.highlight {
-    background: rgba(124,156,255,0.06);
-    border-color: rgba(124,156,255,0.3);
+    background: color-mix(in srgb, var(--nevron-color-m3) 8%, var(--nevron-color-m1));
+    border-color: rgba(0, 103, 178, 0.3);
     color: var(--text);
   }
 
@@ -301,45 +390,45 @@
   .surfaces {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 14px;
-    margin-top: 20px;
+    gap: 0.875rem;
+    margin-top: var(--nevron-space-5);
   }
   .surface-card {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 20px;
+    border-radius: var(--nevron-radius-lg);
+    padding: var(--nevron-space-5);
     position: relative;
   }
-  .surface-card.admin { border-top: 3px solid var(--accent); }
-  .surface-card.pwa   { border-top: 3px solid var(--green); }
-  .surface-card.tv    { border-top: 3px solid var(--amber); }
+  .surface-card.admin { border-top: 3px solid var(--nevron-color-m3); }
+  .surface-card.pwa   { border-top: 3px solid var(--nevron-color-green); }
+  .surface-card.tv    { border-top: 3px solid var(--nevron-color-yellow); }
   .surface-card .kind {
-    font-size: 11px;
+    font-size: 0.6875rem;
     color: var(--text-faint);
     text-transform: uppercase;
     letter-spacing: 0.06em;
     font-weight: 600;
-    margin-bottom: 4px;
+    margin-bottom: var(--nevron-space-1);
   }
   .surface-card .name {
-    font-size: 18px;
+    font-size: 1.125rem;
     font-weight: 600;
-    margin-bottom: 8px;
+    margin-bottom: var(--nevron-space-2);
   }
   .surface-card .url {
-    font-family: "SF Mono", Menlo, monospace;
-    font-size: 12px;
-    color: var(--cyan);
-    margin-bottom: 12px;
+    font-family: var(--nevron-font-mono), monospace;
+    font-size: 0.75rem;
+    color: var(--nevron-color-m4);
+    margin-bottom: var(--nevron-space-3);
   }
   .surface-card p {
-    font-size: 13.5px;
+    font-size: 0.875rem;
     color: var(--text-dim);
   }
   .surface-card .status {
-    margin-top: 12px;
-    font-size: 12px;
+    margin-top: var(--nevron-space-3);
+    font-size: 0.75rem;
     color: var(--text-faint);
   }
   .surface-card .status strong { color: var(--text); }
@@ -348,15 +437,15 @@
   .tree {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 20px 24px;
-    font-family: "SF Mono", Menlo, monospace;
-    font-size: 12.5px;
+    border-radius: var(--nevron-radius-lg);
+    padding: var(--nevron-space-5) var(--nevron-space-6);
+    font-family: var(--nevron-font-mono), monospace;
+    font-size: 0.8125rem;
     line-height: 1.7;
     color: var(--text-dim);
-    margin: 16px 0;
+    margin: var(--nevron-space-4) 0;
   }
-  .tree .new { color: var(--magenta); }
+  .tree .new { color: var(--nevron-color-m5); }
   .tree .existing { color: var(--text); }
   .tree .comment { color: var(--text-faint); }
 
@@ -364,79 +453,79 @@
   .options {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 14px;
-    margin-top: 16px;
+    gap: 0.875rem;
+    margin-top: var(--nevron-space-4);
   }
   .option {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 18px 20px;
+    border-radius: var(--nevron-radius-lg);
+    padding: 1.125rem 1.25rem;
   }
   .option .letter {
-    color: var(--accent);
+    color: var(--nevron-color-m4);
     font-weight: 600;
-    font-size: 13px;
+    font-size: 0.8125rem;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    margin-bottom: 6px;
+    margin-bottom: 0.375rem;
   }
   .option .title {
-    font-size: 15px;
+    font-size: 0.9375rem;
     font-weight: 600;
-    margin-bottom: 6px;
+    margin-bottom: 0.375rem;
   }
   .option p {
-    font-size: 13px;
+    font-size: 0.8125rem;
     color: var(--text-dim);
   }
-  .option.recommended { border-color: rgba(88,209,138,0.4); }
-  .option.recommended .letter { color: var(--green); }
+  .option.recommended { border-color: rgba(54, 160, 88, 0.4); }
+  .option.recommended .letter { color: var(--nevron-color-green); }
 
   /* CALLOUT */
   .callout {
-    background: rgba(240,185,94,0.08);
-    border: 1px solid rgba(240,185,94,0.3);
-    border-left: 4px solid var(--amber);
-    border-radius: 8px;
-    padding: 16px 20px;
-    margin: 20px 0;
+    background: color-mix(in srgb, var(--nevron-color-yellow) 6%, var(--nevron-color-m1));
+    border: 1px solid rgba(246, 169, 0, 0.2);
+    border-left: 4px solid var(--nevron-color-yellow);
+    border-radius: var(--nevron-radius-md);
+    padding: 1rem 1.25rem;
+    margin: var(--nevron-space-5) 0;
   }
   .callout .tag {
-    color: var(--amber);
-    font-size: 11px;
+    color: var(--nevron-color-yellow);
+    font-size: 0.6875rem;
     font-weight: 600;
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    margin-bottom: 4px;
+    margin-bottom: var(--nevron-space-1);
   }
   .callout p {
-    font-size: 14px;
+    font-size: 0.875rem;
     color: var(--text);
     margin: 0;
   }
   .callout.info {
-    background: rgba(124,156,255,0.08);
-    border-color: rgba(124,156,255,0.3);
-    border-left-color: var(--accent);
+    background: color-mix(in srgb, var(--nevron-color-m3) 6%, var(--nevron-color-m1));
+    border-color: rgba(0, 103, 178, 0.2);
+    border-left-color: var(--nevron-color-m3);
   }
-  .callout.info .tag { color: var(--accent); }
+  .callout.info .tag { color: var(--nevron-color-m4); }
 
   /* TABLE */
   table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 14px;
+    margin-top: 0.875rem;
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 10px;
+    border-radius: var(--nevron-radius-lg);
     overflow: hidden;
-    font-size: 13.5px;
+    font-size: 0.875rem;
   }
   th {
     text-align: left;
-    padding: 12px 18px;
-    font-size: 11px;
+    padding: var(--nevron-space-3) 1.125rem;
+    font-size: 0.6875rem;
     text-transform: uppercase;
     letter-spacing: 0.06em;
     color: var(--text-faint);
@@ -445,31 +534,31 @@
     background: var(--bg-elevated);
   }
   td {
-    padding: 12px 18px;
+    padding: var(--nevron-space-3) 1.125rem;
     border-bottom: 1px solid var(--border);
     color: var(--text-dim);
   }
   tr:last-child td { border-bottom: none; }
   td code {
-    font-family: "SF Mono", Menlo, monospace;
-    font-size: 12px;
-    color: var(--accent);
-    background: rgba(124,156,255,0.08);
-    padding: 2px 6px;
-    border-radius: 4px;
+    font-family: var(--nevron-font-mono), monospace;
+    font-size: 0.75rem;
+    color: var(--nevron-color-m4);
+    background: color-mix(in srgb, var(--nevron-color-m3) 8%, var(--nevron-color-m1));
+    padding: 0.125rem 0.375rem;
+    border-radius: var(--nevron-radius-sm);
   }
   td strong { color: var(--text); }
   .new-badge {
     display: inline-block;
-    padding: 2px 8px;
-    background: rgba(210,121,224,0.15);
-    color: var(--magenta);
-    border-radius: 4px;
-    font-size: 10px;
+    padding: 0.125rem 0.5rem;
+    background: color-mix(in srgb, var(--nevron-color-m5) 15%, var(--nevron-color-m1));
+    color: var(--nevron-color-m5);
+    border-radius: var(--nevron-radius-sm);
+    font-size: 0.625rem;
     font-weight: 600;
     letter-spacing: 0.05em;
     text-transform: uppercase;
-    margin-left: 6px;
+    margin-left: 0.375rem;
     vertical-align: middle;
   }
 
@@ -477,15 +566,15 @@
   .two-col {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 24px;
-    margin-top: 24px;
+    gap: var(--nevron-space-6);
+    margin-top: var(--nevron-space-6);
   }
   @media (max-width: 720px) { .two-col { grid-template-columns: 1fr; } }
   .col-card {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 20px;
+    border-radius: var(--nevron-radius-lg);
+    padding: var(--nevron-space-5);
   }
   .col-card h4 { margin-top: 0; }
   .col-card ul {
@@ -494,64 +583,74 @@
     margin: 0;
   }
   .col-card li {
-    font-size: 13px;
+    font-size: 0.8125rem;
     color: var(--text-dim);
-    padding: 8px 0;
+    padding: var(--nevron-space-2) 0;
     border-bottom: 1px solid var(--border);
     display: flex;
     align-items: start;
-    gap: 10px;
+    gap: 0.625rem;
   }
   .col-card li:last-child { border-bottom: none; }
   .col-card li code {
-    font-family: "SF Mono", Menlo, monospace;
-    font-size: 11.5px;
+    font-family: var(--nevron-font-mono), monospace;
+    font-size: 0.75rem;
     color: var(--text);
-    background: var(--bg);
-    padding: 1px 6px;
-    border-radius: 4px;
+    background: color-mix(in srgb, var(--nevron-color-m2) 10%, var(--nevron-color-m1));
+    padding: 0.0625rem 0.375rem;
+    border-radius: var(--nevron-radius-sm);
     flex-shrink: 0;
   }
   .col-card li .desc { flex: 1; }
 
   /* FOOTER */
   footer {
-    padding: 40px 0;
+    padding: var(--nevron-space-10) 0;
     text-align: center;
     color: var(--text-faint);
-    font-size: 13px;
+    font-size: 0.8125rem;
+    border-top: 1px solid var(--border);
   }
-  footer a { color: var(--text-dim); text-decoration: none; }
-  footer a:hover { color: var(--text); }
+  footer .footer-logo {
+    display: inline-block;
+    margin-bottom: var(--nevron-space-4);
+    opacity: 0.4;
+  }
+  footer .footer-logo img {
+    height: 20px;
+    width: auto;
+  }
+  footer a { color: var(--text-dim); text-decoration: none; transition: color var(--nevron-transition-fast); }
+  footer a:hover { color: var(--nevron-color-m4); }
 
   /* TOAST */
   .toast {
     position: fixed;
-    bottom: 24px;
-    right: 24px;
+    bottom: var(--nevron-space-6);
+    right: var(--nevron-space-6);
     background: var(--bg-elevated);
     border: 1px solid var(--border-strong);
-    border-radius: 10px;
-    padding: 14px 20px;
+    border-radius: var(--nevron-radius-lg);
+    padding: 0.875rem 1.25rem;
     box-shadow: var(--shadow);
     display: none;
     align-items: center;
-    gap: 10px;
-    z-index: 100;
+    gap: 0.625rem;
+    z-index: var(--nevron-z-toast);
     max-width: 360px;
   }
   .toast.show { display: flex; }
-  .toast.success { border-color: var(--green); }
-  .toast.error { border-color: var(--red); }
-  .toast-icon { font-size: 18px; flex-shrink: 0; }
+  .toast.success { border-color: var(--nevron-color-green); }
+  .toast.error { border-color: var(--nevron-color-red); }
+  .toast-icon { font-size: 1.125rem; flex-shrink: 0; }
   .toast-content { flex: 1; }
   .toast-title {
-    font-size: 14px;
+    font-size: 0.875rem;
     font-weight: 600;
-    margin-bottom: 2px;
+    margin-bottom: 0.125rem;
   }
   .toast-desc {
-    font-size: 13px;
+    font-size: 0.8125rem;
     color: var(--text-dim);
   }
 
@@ -559,19 +658,19 @@
   .modal-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.7);
+    background: rgba(0, 1, 38, 0.75);
     backdrop-filter: blur(4px);
     display: none;
     align-items: center;
     justify-content: center;
-    z-index: 200;
-    padding: 20px;
+    z-index: var(--nevron-z-modal);
+    padding: var(--nevron-space-5);
   }
   .modal-overlay.show { display: flex; }
   .modal {
     background: var(--bg-card);
     border: 1px solid var(--border-strong);
-    border-radius: 12px;
+    border-radius: var(--nevron-radius-xl);
     max-width: 900px;
     width: 100%;
     max-height: 85vh;
@@ -580,14 +679,14 @@
     box-shadow: var(--shadow);
   }
   .modal-header {
-    padding: 20px 24px;
+    padding: var(--nevron-space-5) var(--nevron-space-6);
     border-bottom: 1px solid var(--border);
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
   .modal-header h3 {
-    font-size: 17px;
+    font-size: 1.0625rem;
     font-weight: 600;
     margin: 0;
   }
@@ -595,22 +694,24 @@
     background: transparent;
     border: none;
     color: var(--text-dim);
-    font-size: 24px;
+    font-size: 1.5rem;
     cursor: pointer;
-    padding: 0 4px;
+    padding: 0 var(--nevron-space-1);
+    transition: color var(--nevron-transition-fast);
   }
+  .modal-close:hover { color: var(--text); }
   .modal-body {
-    padding: 24px;
+    padding: var(--nevron-space-6);
     overflow-y: auto;
     flex: 1;
   }
   .modal pre {
-    background: var(--bg);
+    background: color-mix(in srgb, var(--nevron-color-m2) 6%, var(--nevron-color-m1));
     border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 16px;
-    font-family: "SF Mono", Menlo, monospace;
-    font-size: 12px;
+    border-radius: var(--nevron-radius-md);
+    padding: var(--nevron-space-4);
+    font-family: var(--nevron-font-mono), monospace;
+    font-size: 0.75rem;
     line-height: 1.6;
     color: var(--text-dim);
     overflow-x: auto;
@@ -618,11 +719,11 @@
     word-break: break-word;
   }
   .modal-footer {
-    padding: 16px 24px;
+    padding: var(--nevron-space-4) var(--nevron-space-6);
     border-top: 1px solid var(--border);
     display: flex;
     justify-content: flex-end;
-    gap: 12px;
+    gap: var(--nevron-space-3);
   }
 </style>
 </head>
@@ -631,6 +732,9 @@
 <!-- HERO -->
 <div class="hero">
   <div class="hero-inner">
+    <div class="hero-brand">
+      <img src="./nevron-logo.svg" alt="Nevron" />
+    </div>
     <div class="eyebrow">E2E TASK BRIEF</div>
     <h1>NevronCore End-to-End Testing</h1>
     <p class="lead">Scaffolding is in place. Your job: refine the admin specs, then build PWA and TV coverage from scratch. You know our platform best — pick the right tenants, write the right tests.</p>
@@ -903,7 +1007,7 @@ npm test</div>
   { name: 'pwa-mobile',    use: { ...devices['iPhone 13'], baseURL: 'http://localhost:8100' },           testDir: './pwa' },
 ]</div>
 
-    <p style="color: var(--text-dim); font-size: 13.5px; margin-top: 14px;">Run with: <code>npm test -- --project=pwa-mobile</code></p>
+    <p style="color: var(--text-dim); font-size: 0.875rem; margin-top: 0.875rem;">Run with: <code>npm test -- --project=pwa-mobile</code></p>
 
     <div class="callout">
       <div class="tag">Seeding</div>
@@ -1019,8 +1123,9 @@ npm test</div>
 <!-- FOOTER -->
 <footer>
   <div class="container">
+    <div class="footer-logo"><img src="./nevron-logo.svg" alt="Nevron" /></div>
     <p>NevronFlow E2E Task Brief · 23. 4. 2026</p>
-    <p style="margin-top: 8px;">
+    <p style="margin-top: 0.5rem;">
       <a href="./index.html">NevronFlow Framework</a> ·
       <a href="https://github.com/amadejdemsar-create/nevronflow-framework" target="_blank">Framework repo</a> ·
       <a href="https://playwright.dev/docs/intro" target="_blank">Playwright docs</a>
@@ -1045,7 +1150,7 @@ npm test</div>
       <button class="modal-close" onclick="hideModal()">×</button>
     </div>
     <div class="modal-body">
-      <p style="color: var(--text-dim); font-size: 14px; margin-bottom: 16px;">This is what gets copied. Paste it into a Claude Code session inside your nevron-core checkout.</p>
+      <p style="color: var(--text-dim); font-size: 0.875rem; margin-bottom: var(--nevron-space-4);">This is what gets copied. Paste it into a Claude Code session inside your nevron-core checkout.</p>
       <pre id="prompt-text"></pre>
     </div>
     <div class="modal-footer">
